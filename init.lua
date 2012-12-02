@@ -316,7 +316,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	list_index=list_index+1
 	end
 	
-	if fields.searchbox then
+	if fields.searchbutton then
 		local size=0
 		unified_inventory.filtered_items_list[player_name]={}
 		for name,def in pairs(minetest.registered_items) do
