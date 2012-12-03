@@ -17,44 +17,57 @@ unified_inventory.filtered_items_list = {}
 unified_inventory.activefilter = {}
 
 -- default inventory page
-unified_inventory.default = minetest.setting_get("inventory_default") or "craft"
+unified_inventory.default = "craft"
 
 
 local home_gui = {}
 local homepos = {}
 unified_inventory.home_filename = minetest.get_worldpath()..'/unified_inventory_home'
 
--- register_button
-unified_inventory.register_button = function(player,name,label)
-	local player_name = player:get_player_name()
-	if unified_inventory.buttons[player_name] == nil then
-		unified_inventory.buttons[player_name] = {}
+-- Create detached creative inventory after loading all mods
+minetest.after(0.01, function()
+	unified_inventory.items_list = {}
+	for name,def in pairs(minetest.registered_items) do
+		if (not def.groups.not_in_creative_inventory or def.groups.not_in_creative_inventory == 0)
+				and def.description and def.description ~= "" then
+			table.insert(unified_inventory.items_list, name)
+		end
 	end
-	unified_inventory.buttons[player_name][name] = label
-end
+	table.sort(unified_inventory.items_list)
+	unified_inventory.items_list_size = #unified_inventory.items_list
+	print ("Unified Inventory. inventory size: "..unified_inventory.items_list_size)
+end)
 
-unified_inventory.register_control_button = function(player,name,label)
+-- register_on_joinplayer
+minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
-	if unified_inventory.control_buttons[player_name] == nil then
-		unified_inventory.control_buttons[player_name] = {}
-	end
-	unified_inventory.control_buttons[player_name][name] = label
-end
+	table.insert(unified_inventory.players, player_name)
+	unified_inventory.current_index[player_name] = 1
+	unified_inventory.filtered_items_list[player_name] = {}
+	unified_inventory.filtered_items_list[player_name] = unified_inventory.items_list
+	unified_inventory.filtered_items_list_size[player_name]=unified_inventory.items_list_size
+	unified_inventory.activefilter[player_name]=""
+	unified_inventory.apply_filter(player_name, "")
+	unified_inventory.set_inventory_formspec(player,unified_inventory.get_formspec(player, unified_inventory.default))
+end)
 
 -- set_inventory_formspec
 unified_inventory.set_inventory_formspec = function(player,formspec)
-	if minetest.setting_getbool("creative_mode") then
-		-- if creative mode is on then wait a bit
-		minetest.after(0.01,function()
+	if player then
+		if minetest.setting_getbool("creative_mode") then
+			-- if creative mode is on then wait a bit
+			minetest.after(0.01,function()
 			player:set_inventory_formspec(formspec)
-		end)
-	else
+			end)
+		else
 		player:set_inventory_formspec(formspec)
+		end
 	end
 end
 
 -- get_formspec
 unified_inventory.get_formspec = function(player,page)
+	if player==nil then	return "" end
 	local player_name = player:get_player_name()
 	unified_inventory.current_page[player_name]=page
 	
@@ -194,20 +207,6 @@ unified_inventory.refill = minetest.create_detached_inventory("refill", {
 })
 unified_inventory.refill:set_size("main", 1)
 
--- register_on_joinplayer
-minetest.register_on_joinplayer(function(player)
-	local player_name = player:get_player_name()
-	table.insert(unified_inventory.players, player_name)
-	unified_inventory.current_index[player_name] = 1
-	minetest.after(1,function()
-		unified_inventory.set_inventory_formspec(player,unified_inventory.get_formspec(player, unified_inventory.default))
-	end)
-	unified_inventory.filtered_items_list[player_name] = {}
-	unified_inventory.filtered_items_list[player_name] = unified_inventory.items_list
-	unified_inventory.filtered_items_list_size[player_name]=unified_inventory.items_list_size
-	unified_inventory.activefilter[player_name]=""
-end)
-
 -- register_on_player_receive_fields
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local player_name = player:get_player_name()
@@ -264,7 +263,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 	
 	-- Inventory page controls
-	local start_i=math.floor(unified_inventory.current_index[player_name]/80 +1 )
+	local start=math.floor(unified_inventory.current_index[player_name]/80 +1 )
+	local start_i=start
 	local pagemax = math.floor((unified_inventory.filtered_items_list_size[player_name]-1) / (80) + 1)
 	
 	if fields.start_list then
@@ -291,12 +291,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if start_i > pagemax then
 		start_i =  pagemax
 	end
+	if not (start_i	==start) then
+		unified_inventory.current_index[player_name] = (start_i-1)*80+1
+		unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,unified_inventory.current_page[player_name]))
+		end
 		
-	unified_inventory.current_index[player_name] = (start_i-1)*80+1
-	unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,unified_inventory.current_page[player_name]))
-	
 	local list_index=unified_inventory.current_index[player_name]
-	
 	for i=0,80,1 do
 		local button="item_button"..list_index
 		if fields[button] then 
@@ -317,23 +317,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 	
 	if fields.searchbutton then
-		local size=0
-		unified_inventory.filtered_items_list[player_name]={}
-		for name,def in pairs(minetest.registered_items) do
-		if (not def.groups.not_in_creative_inventory or def.groups.not_in_creative_inventory == 0)
-				and def.description and def.description ~= "" then
-			if string.find(def.name, fields.searchbox) or string.find(def.description, fields.searchbox) then
-				table.insert(unified_inventory.filtered_items_list[player_name], name)
-				size=size+1
-			end
-		end
-	
-	end
-	table.sort(unified_inventory.filtered_items_list[player_name])
-	unified_inventory.filtered_items_list_size[player_name]=size
-	unified_inventory.current_index[player_name]=1	
-	unified_inventory.activefilter[player_name]=fields.searchbox
-	unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,unified_inventory.current_page[player_name]))
+		unified_inventory.apply_filter(player_name, fields.searchbox)
+		unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,unified_inventory.current_page[player_name]))
 	end	
 	
 end)
@@ -380,19 +365,25 @@ unified_inventory.go_home = function(player)
 	end
 end
 
-
--- Create detached creative inventory after loading all mods
-minetest.after(0.01, function()
-	unified_inventory.items_list = {}
+--apply filter to the inventory list
+unified_inventory.apply_filter = function(player_name,filter)
+	local size=0
+	unified_inventory.filtered_items_list[player_name]={}
 	for name,def in pairs(minetest.registered_items) do
 		if (not def.groups.not_in_creative_inventory or def.groups.not_in_creative_inventory == 0)
 				and def.description and def.description ~= "" then
-			table.insert(unified_inventory.items_list, name)
+			if string.find(def.name, filter) or string.find(def.description, filter) then
+				table.insert(unified_inventory.filtered_items_list[player_name], name)
+				size=size+1
+			end
 		end
+	
 	end
-	table.sort(unified_inventory.items_list)
-	unified_inventory.items_list_size = #unified_inventory.items_list
-	print ("Unified Inventory. inventory size: "..unified_inventory.items_list_size)
+	table.sort(unified_inventory.filtered_items_list[player_name])
+	unified_inventory.filtered_items_list_size[player_name]=size
+	unified_inventory.current_index[player_name]=1	
+	unified_inventory.activefilter[player_name]=filter
+	unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,unified_inventory.current_page[player_name]))
+end
 
-end)
 
