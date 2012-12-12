@@ -46,11 +46,12 @@ minetest.register_on_joinplayer(function(player)
 	unified_inventory.alternate[player_name] = 1
 	unified_inventory.current_item[player_name] =nil
 	unified_inventory.set_inventory_formspec(player,unified_inventory.get_formspec(player, unified_inventory.default))
-	
-	local inv = minetest.create_detached_inventory(player:get_player_name().."craftrecipe",{
-		allow_put = function(inv, listname, index, stack, player)
-			return 0
-			end,
+
+--crafting guide inventories	
+local inv = minetest.create_detached_inventory(player:get_player_name().."craftrecipe",{
+	allow_put = function(inv, listname, index, stack, player)
+		return 0
+		end,
 		allow_take = function(inv, listname, index, stack, player)
 			return 0
 		end,
@@ -60,9 +61,37 @@ minetest.register_on_joinplayer(function(player)
 	})
 	inv:set_size("output", 1)
 	inv:set_size("build", 3*3)
-	inv:set_size("cook", 1)
-	inv:set_size("fuel", 1)
+
+-- refill slot
+unified_inventory.refill = minetest.create_detached_inventory(player_name.."refill", {
+	allow_put = function(inv, listname, index, stack, player)
+		if minetest.setting_getbool("creative_mode") then
+			return stack:get_count()
+		else
+			return 0
+		end
+	end,
+	on_put = function(inv, listname, index, stack, player)
+		inv:set_stack(listname, index, ItemStack(stack:get_name().." "..stack:get_stack_max()))
+	end,
+})
+unified_inventory.refill:set_size("main", 1)
 end)
+
+-- trash slot
+unified_inventory.trash = minetest.create_detached_inventory("trash", {
+	allow_put = function(inv, listname, index, stack, player)
+		if minetest.setting_getbool("creative_mode") then
+			return stack:get_count()
+		else
+			return 0
+		end
+	end,
+	on_put = function(inv, listname, index, stack, player)
+		inv:set_stack(listname, index, nil)
+	end,
+})
+unified_inventory.trash:set_size("main", 1)
 
 -- set_inventory_formspec
 unified_inventory.set_inventory_formspec = function(player,formspec)
@@ -115,7 +144,7 @@ unified_inventory.get_formspec = function(player,page)
 		formspec = formspec.."list[current_player;craft;2,1;3,3;]"
 			if minetest.setting_getbool("creative_mode") then
 				formspec = formspec.."label[0,2.5;Refill:]"
-				formspec = formspec.."list[detached:refill;main;0,3;1,1;]"
+				formspec = formspec.."list[detached:"..player_name.."refill;main;0,3;1,1;]"
 				formspec = formspec.."label[7,2.5;Trash:]"
 				formspec = formspec.."list[detached:trash;main;7,3;1,1;]"
 			end
@@ -130,8 +159,8 @@ unified_inventory.get_formspec = function(player,page)
 		formspec = formspec.."label[6,0.5;Output:]"
 		formspec = formspec.."label[6,2.6;Method:]"
 		local item_name=unified_inventory.current_item[player_name]
-		--print (dump(item_name))
 		if item_name then
+			formspec = formspec.."label[2,0;"..item_name.."]"	
 			local alternates = 0
 			local alternate = unified_inventory.alternate[player_name]
 			local crafts = crafts_table[item_name]
@@ -225,36 +254,6 @@ unified_inventory.get_formspec = function(player,page)
 	return formspec
 end
 
--- trash slot
-unified_inventory.trash = minetest.create_detached_inventory("trash", {
-	allow_put = function(inv, listname, index, stack, player)
-		if minetest.setting_getbool("creative_mode") then
-			return stack:get_count()
-		else
-			return 0
-		end
-	end,
-	on_put = function(inv, listname, index, stack, player)
-		inv:set_stack(listname, index, nil)
-	end,
-})
-unified_inventory.trash:set_size("main", 1)
-
--- refill slot
-unified_inventory.refill = minetest.create_detached_inventory("refill", {
-	allow_put = function(inv, listname, index, stack, player)
-		if minetest.setting_getbool("creative_mode") then
-			return stack:get_count()
-		else
-			return 0
-		end
-	end,
-	on_put = function(inv, listname, index, stack, player)
-		inv:set_stack(listname, index, ItemStack(stack:get_name().." "..stack:get_stack_max()))
-	end,
-})
-unified_inventory.refill:set_size("main", 1)
-
 -- register_on_player_receive_fields
 minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local player_name = player:get_player_name()
@@ -302,12 +301,20 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		unified_inventory.go_home(player)
 	end
 	if fields.misc_set_day then
+		if minetest.get_player_privs(player_name).settime==true then 
 		minetest.env:set_timeofday((6000 % 24000) / 24000)
 		minetest.chat_send_player(player_name, "Time of day set to 6am")
+		else
+		minetest.chat_send_player(player_name, "You don't have settime priviledge!")
+		end
 	end
 	if fields.misc_set_night then
+		if minetest.get_player_privs(player_name).settime==true then 	
 		minetest.env:set_timeofday((21000 % 24000) / 24000)
-		minetest.chat_send_player(player_name, "Time of day set to 9pm")	
+		minetest.chat_send_player(player_name, "Time of day set to 9pm")
+		else
+		minetest.chat_send_player(player_name, "You don't have settime priviledge!")	
+		end	
 	end
 	
 	-- Inventory page controls
@@ -489,7 +496,7 @@ unified_inventory.update_recipe = function(player, stack_name, alternate)
 		alternate = 1
 	end
 	local craft = crafts[alternate]
-	print (dump(craft))
+	--print (dump(craft))
 	--minetest.chat_send_player(player:get_player_name(), "recipe for "..stack_name..": "..dump(craft))
 	
 	local itemstack = ItemStack(craft.output)
