@@ -357,6 +357,10 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	for i=0,80,1 do
 		local button="item_button"..list_index
 		if fields[button] then 
+			if minetest.setting_getbool("creative_mode")==false then
+				unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,"craftguide"))
+				page="craftguide"
+				end			
 			if page=="craftguide" then 
 				unified_inventory.current_item[player_name] = unified_inventory.filtered_items_list[player_name][list_index] 
 				unified_inventory.alternate[player_name] = 1
@@ -502,22 +506,15 @@ unified_inventory.update_recipe = function(player, stack_name, alternate)
 	local itemstack = ItemStack(craft.output)
 	inv:set_stack("output", 1, itemstack)
 
-	-- cook
-	if craft.type == "cooking" then
+	-- cook, fuel, grinding recipes
+	if craft.type == "cooking" or craft.type == "fuel" or craft.type == "grinding" then
 		def=unified_inventory.find_item_def(craft.recipe)
 		if def then
 			inv:set_stack("build", 1, def)
 		end
 		return 
 	end
-	-- fuel
-	if craft.type == "fuel" then
-		def=unified_inventory.find_item_def(craft.recipe)
-		if def then
-			inv:set_stack("build", 1, def)
-		end
-		return
-	end
+	
 	-- build (shaped or shapeless)
 	if craft.recipe[1] then
 		def=unified_inventory.find_item_def(craft.recipe[1])
