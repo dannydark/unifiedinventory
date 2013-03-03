@@ -1,11 +1,13 @@
--- override minetest.register_craft
 crafts_table ={}
 crafts_table_count=0
+UI_recipes_hook=true
 
+-- override minetest.register_craft
 local minetest_register_craft = minetest.register_craft
 minetest.register_craft = function (options) 
-	minetest_register_craft(options) 
 	register_craft(options)
+	if options.type=="alloy" or options.type=="grinding" then return end
+	minetest_register_craft(options) 
 end
 
 -- register_craft
