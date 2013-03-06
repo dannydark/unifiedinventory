@@ -427,7 +427,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	list_index=list_index+1
 	end
 	
-	if fields.searchbutton or fields.searchbox then
+	if fields.searchbutton then
 		unified_inventory.apply_filter(player, fields.searchbox)
 		unified_inventory.set_inventory_formspec(player, unified_inventory.get_formspec(player,unified_inventory.current_page[player_name]))
 		minetest.sound_play("paperflip2", {to_player=player_name, gain = 1.0})
