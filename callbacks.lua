@@ -39,9 +39,8 @@ minetest.register_on_joinplayer(function(player)
 			end
 		end,
 		on_put = function(inv, listname, index, stack, player)
-			local stacktable = stack:to_table()
-			stacktable.count = stack:get_stack_max()
-			inv:set_stack(listname, index, ItemStack(stacktable))
+			stack:set_count(stack:get_stack_max())
+			inv:set_stack(listname, index, stack)
 			minetest.sound_play("electricity", {to_player=player_name, gain = 1.0})
 		end,
 	})
