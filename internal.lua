@@ -22,15 +22,13 @@ function unified_inventory.get_formspec(player, page)
 	end
 
 	-- Main buttons
-	local i = 0
 	for i, def in pairs(unified_inventory.buttons) do
 		if def.type == "image" then
 			formspec = formspec.."image_button["
-					..(0.65 * i)..",9;0.8,0.8;"
+					..(0.65 * (i - 1))..",9;0.8,0.8;"
 					..minetest.formspec_escape(def.image)..";"
 					..minetest.formspec_escape(def.name)..";]"
 		end
-		i = i + 1
 	end
 
 	-- Controls to flip items pages
