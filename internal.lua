@@ -93,9 +93,10 @@ function unified_inventory.apply_filter(player, filter)
 	local size = 0
 	local lfilter = string.lower(filter)
 	if lfilter ~= "" then 
-		for i=1, lfilter:len() do
-			if lfilter:sub(i, i) == '[' then 
-				str_temp1 = ""
+		for c in lfilter:gmatch(".") do
+			if c == '[' or c == ']' or c == '{' or c == '}' or
+			   c == '(' or c == ')' or c == '%' then 
+				lfilter = ""
 				break
 			end
 		end
