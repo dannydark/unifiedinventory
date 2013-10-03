@@ -47,8 +47,9 @@ function unified_inventory.get_formspec(player, page)
 	-- Items list
 	local list_index = unified_inventory.current_index[player_name]
 	local page = math.floor(list_index / (80) + 1)
-	local pagemax = math.floor((unified_inventory.filtered_items_list_size[player_name] - 1) / (80) + 1)
-	local image = nil
+	local pagemax = math.floor(
+		(#unified_inventory.filtered_items_list[player_name] - 1)
+			/ (80) + 1)
 	local item = {}
 	for y = 0, 9 do
 	for x = 0, 7 do
@@ -57,8 +58,8 @@ function unified_inventory.get_formspec(player, page)
 			formspec = formspec.."item_image_button["
 					..(8.2 + x * 0.7)..","
 					..(1   + y * 0.7)..";.81,.81;"
-					..name..";item_button"
-					..list_index..";]"
+					..name..";item_button_"
+					..name..";]"
 			list_index = list_index + 1
 		end
 	end
@@ -110,102 +111,6 @@ function unified_inventory.apply_filter(player, filter)
 	unified_inventory.activefilter[player_name] = filter
 	unified_inventory.set_inventory_formspec(player,
 			unified_inventory.current_page[player_name])
-end
-
-
--- update_recipe
-function unified_inventory.update_recipe(player, stack_name, alternate)
-	local inv = minetest.get_inventory({
-		type = "detached",
-		name = player:get_player_name().."craftrecipe"
-	})	
-	for i = 0, inv:get_size("build") do
-		inv:set_stack("build", i, nil)
-	end
-	inv:set_stack("output", 1, nil)
-	alternate = tonumber(alternate) or 1
-	local crafts = unified_inventory.crafts_table[stack_name]
-	--print(dump(crafts))
-	if next(crafts) == nil then -- No craft recipes
-		return
-	end
-	if alternate < 1 or alternate > #crafts then
-		alternate = 1
-	end
-	local craft = crafts[alternate]
-	inv:set_stack("output", 1, craft.output)
-	local items = craft.items
-
-	if craft.type == "cooking" or
-	   craft.type == "fuel" or
-	   craft.type == "grinding" or
-	   craft.type == "extracting" or
-	   craft.type == "compressing" then
-		def = unified_inventory.find_item_def(craft["items"][1])
-		if def then
-			inv:set_stack("build", 1, def)
-		end
-		return
-	end
-	if craft.width == 0 then
-		for i = 1, 3 do
-			if craft.items[i] then
-				def = unified_inventory.find_item_def(craft.items[i])
-				if def then
-					inv:set_stack("build", i, def)
-				end
-			end
-		end
-	end
-	if craft.width == 1 then
-		local build_table={1, 4, 7}
-		for i = 1, 3 do
-			if craft.items[i] then
-				def = unified_inventory.find_item_def(craft.items[i])
-				if def then
-					inv:set_stack("build", build_table[i], def)
-				end
-			end
-		end
-	end
-	if craft.width == 2 then
-		local build_table = {1, 2, 4, 5, 7, 8}
-		for i=1, 6 do
-			if craft.items[i] then
-				def = unified_inventory.find_item_def(craft.items[i])
-				if def then
-					inv:set_stack("build", build_table[i], def)
-				end
-			end
-		end
-	end
-	if craft.width == 3 then
-		for i=1, 9 do
-			if craft.items[i] then
-				def = unified_inventory.find_item_def(craft.items[i])
-				if def then
-					inv:set_stack("build", i, def)
-				end
-			end
-		end
-	end
-end
-
-function unified_inventory.find_item_def(def)
-	if type(def) ~= "string" then
-		return nil
-	end
-	if string.find(def, "group:") then
-		def = string.gsub(def, "group:", "")
-		def = string.gsub(def, "\"", "")
-		if minetest.registered_nodes["default:"..def] then
-			return "default:"..def
-		end
-		local items = unified_inventory.items_in_group(def)
-		return items[1]
-	else
-		return def
-	end
 end
 
 function unified_inventory.items_in_group(groups)

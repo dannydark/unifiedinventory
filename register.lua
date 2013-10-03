@@ -1,6 +1,6 @@
 
 minetest.register_privilege("creative", {
-	description="Can use the creative inventory",
+	description = "Can use the creative inventory",
 	give_to_singleplayer = false,
 })
 
@@ -137,27 +137,27 @@ unified_inventory.register_page("craftguide", {
 		local player_name = player:get_player_name()
 		formspec = formspec.."background[0.06,0.99;7.92,7.52;ui_craftguide_form.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
-		formspec = formspec.."list[detached:"..player_name.."craftrecipe;build;2,1;3,3;]"
 		formspec = formspec.."list[detached:"..player_name.."craftrecipe;output;6,1;1,1;]"
 		formspec = formspec.."label[2,0.5;Input:]"
 		formspec = formspec.."label[6,0.5;Output:]"
 		formspec = formspec.."label[6,2.6;Method:]"
 		local item_name = unified_inventory.current_item[player_name]
+		local craft = nil
 		if item_name then
 			formspec = formspec.."label[2,0;"..item_name.."]"	
 			local alternates = 0
 			local alternate = unified_inventory.alternate[player_name]
 			local crafts = unified_inventory.crafts_table[item_name]
-
 			if crafts ~= nil and #crafts > 0 then
 				alternates = #crafts
-				local craft = crafts[alternate]
+				craft = crafts[alternate]
 				local method = craft.type
-				if craft.type == "shapeless" then
-					method="shapeless crafting"
-				end	
-				if craft.type == "alloy" then
-					method="alloy cooking"
+				if craft.type == "normal" then
+					method = "crafting"
+				elseif craft.type == "shapeless" then
+					method = "shapeless crafting"
+				elseif craft.type == "alloy" then
+					method = "alloy cooking"
 				end
 				formspec = formspec.."label[6,3;"..method.."]"
 			end
@@ -167,6 +167,47 @@ unified_inventory.register_page("craftguide", {
 						..tostring(alternates).."]"
 				formspec = formspec.."button[0,3.15;2,1;alternate;Alternate]"
 			end
+		end
+
+		local craftinv = minetest.get_inventory({
+			type = "detached",
+			name = player_name.."craftrecipe"
+		})
+
+		if not craft then
+			craftinv:set_stack("output", 1, nil)
+			return formspec
+		end
+
+		craftinv:set_stack("output", 1, craft.output)
+
+		local width = craft.width
+		if width == 0 then
+			-- Shapeless recipe
+			width = 3
+		end
+
+		local i = 1
+		for y = 1, 3 do
+		for x = 1, width do
+			local item = craft.items[i]
+			if item then
+				if string.sub(item, 1, 6) == "group:" then
+					local group = string.sub(item, 7)
+					formspec = formspec.."image_button["
+						..(1.05 + x)..","..(0.05 + y)..";0.9,0.9;"
+						.."ui_group.png;;"
+						..minetest.formspec_escape(group).."]"
+				else
+					formspec = formspec.."item_image_button["
+						..(1.05 + x)..","..(0.05 + y)..";0.9,0.9;"
+						..minetest.formspec_escape(item)..";"
+						.."item_button_"
+						..minetest.formspec_escape(item)..";]"
+				end
+			end
+			i = i + 1
+		end
 		end
 		return formspec
 	end,
