@@ -5,18 +5,18 @@ function unified_inventory.get_formspec(player, page)
 	end
 	local player_name = player:get_player_name()
 	unified_inventory.current_page[player_name] = page
+	local pagedef = unified_inventory.pages[page]
 
 	local formspec = "size[14,10]"
-
-	-- Player inventory
-	formspec = formspec .. "list[current_player;main;0,4.5;8,4;]"
+	local fsdata = nil
 
 	-- Background
 	formspec = formspec .. "background[-0.19,-0.2;14.38,10.55;ui_form_bg.png]"
 	
 	-- Current page
 	if unified_inventory.pages[page] then
-		formspec = unified_inventory.pages[page].get_formspec(player, formspec)
+		fsdata = pagedef.get_formspec(player)
+		formspec = formspec .. fsdata.formspec
 	else
 		return "" -- Invalid page name
 	end
@@ -29,6 +29,15 @@ function unified_inventory.get_formspec(player, page)
 					..minetest.formspec_escape(def.image)..";"
 					..minetest.formspec_escape(def.name)..";]"
 		end
+	end
+
+	if fsdata.draw_inventory ~= false then
+		-- Player inventory
+		formspec = formspec .. "list[current_player;main;0,4.5;8,4;]"
+	end
+
+	if fsdata.draw_item_list == false then
+		return formspec
 	end
 
 	-- Controls to flip items pages

@@ -4,9 +4,9 @@
 -- License: GPLv3
 
 unified_inventory.register_page("bags", {
-	get_formspec = function(player, formspec)
+	get_formspec = function(player)
 		local player_name = player:get_player_name()
-		formspec = formspec .. "background[0.06,0.99;7.92,7.52;ui_bags_main_form.png]"
+		local formspec = "background[0.06,0.99;7.92,7.52;ui_bags_main_form.png]"
 		formspec = formspec.."label[0,0;Bags]"
 		formspec = formspec.."button[0,2;2,0.5;bag1;Bag 1]"
 		formspec = formspec.."button[2,2;2,0.5;bag2;Bag 2]"
@@ -16,7 +16,7 @@ unified_inventory.register_page("bags", {
 		formspec = formspec.."list[detached:"..player_name.."_bags;bag2;2.5,1;1,1;]"
 		formspec = formspec.."list[detached:"..player_name.."_bags;bag3;4.5,1;1,1;]"
 		formspec = formspec.."list[detached:"..player_name.."_bags;bag4;6.5,1;1,1;]"
-		return formspec
+		return {formspec=formspec}
 	end,
 })
 
@@ -27,10 +27,10 @@ unified_inventory.register_button("bags", {
 
 for i = 1, 4 do
 	unified_inventory.register_page("bag"..i, {
-		get_formspec = function(player, formspec)
+		get_formspec = function(player)
 			local stack = player:get_inventory():get_stack("bag"..i, 1)
 			local image = stack:get_definition().inventory_image
-			formspec = formspec.."image[7,0;1,1;"..image.."]"
+			local formspec = "image[7,0;1,1;"..image.."]"
 			formspec = formspec.."list[current_player;bag"..i.."contents;0,1;8,3;]"
 			local slots = stack:get_definition().groups.bagslots
 			if slots == 8 then
@@ -40,7 +40,7 @@ for i = 1, 4 do
 			elseif slots == 24 then
 				formspec = formspec.."background[0.06,0.99;7.92,7.52;ui_bags_lg_form.png]"
 			end
-			return formspec
+			return {formspec=formspec}
 		end,
 	})
 end

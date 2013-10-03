@@ -118,7 +118,7 @@ unified_inventory.register_button("clear_inv", {
 unified_inventory.register_page("craft", {
 	get_formspec = function(player, formspec)
 		local player_name = player:get_player_name()
-		formspec = formspec.."background[0.06,0.99;7.92,7.52;ui_crafting_form.png]"
+		local formspec = "background[0.06,0.99;7.92,7.52;ui_crafting_form.png]"
 		formspec = formspec.."label[0,0;Crafting]"
 		formspec = formspec.."list[current_player;craftpreview;6,1;1,1;]"
 		formspec = formspec.."list[current_player;craft;2,1;3,3;]"
@@ -128,14 +128,14 @@ unified_inventory.register_page("craft", {
 			formspec = formspec.."label[0,2.5;Refill:]"
 			formspec = formspec.."list[detached:"..player_name.."refill;main;0,3;1,1;]"
 		end
-		return formspec
+		return {formspec=formspec}
 	end,
 })
 
 unified_inventory.register_page("craftguide", {
-	get_formspec = function(player, formspec)
+	get_formspec = function(player)
 		local player_name = player:get_player_name()
-		formspec = formspec.."background[0.06,0.99;7.92,7.52;ui_craftguide_form.png]"
+		local formspec = "background[0.06,0.99;7.92,7.52;ui_craftguide_form.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
 		formspec = formspec.."list[detached:"..player_name.."craftrecipe;output;6,1;1,1;]"
 		formspec = formspec.."label[2,0.5;Input:]"
@@ -176,7 +176,7 @@ unified_inventory.register_page("craftguide", {
 
 		if not craft then
 			craftinv:set_stack("output", 1, nil)
-			return formspec
+			return {formspec=formspec}
 		end
 
 		craftinv:set_stack("output", 1, craft.output)
@@ -209,6 +209,7 @@ unified_inventory.register_page("craftguide", {
 			i = i + 1
 		end
 		end
-		return formspec
+		return {formspec=formspec}
 	end,
 })
+
