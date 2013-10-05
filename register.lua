@@ -118,7 +118,8 @@ unified_inventory.register_button("clear_inv", {
 unified_inventory.register_page("craft", {
 	get_formspec = function(player, formspec)
 		local player_name = player:get_player_name()
-		local formspec = "background[0.06,0.99;7.92,7.52;ui_crafting_form.png]"
+		local formspec = "background[0,1;8,3;ui_crafting_form.png]"
+		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting]"
 		formspec = formspec.."list[current_player;craftpreview;6,1;1,1;]"
 		formspec = formspec.."list[current_player;craft;2,1;3,3;]"
@@ -135,16 +136,15 @@ unified_inventory.register_page("craft", {
 unified_inventory.register_page("craftguide", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
-		local formspec = "background[0.06,0.99;7.92,7.52;ui_craftguide_form.png]"
+		local formspec = "background[0,1;8,3;ui_craftguide_form.png]"
+		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
 		formspec = formspec.."list[detached:"..player_name.."craftrecipe;output;6,1;1,1;]"
-		formspec = formspec.."label[2,0.5;Input:]"
-		formspec = formspec.."label[6,0.5;Output:]"
 		formspec = formspec.."label[6,2.6;Method:]"
 		local item_name = unified_inventory.current_item[player_name]
 		local craft = nil
 		if item_name then
-			formspec = formspec.."label[2,0;"..item_name.."]"	
+			formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..item_name..";]"
 			local alternates = 0
 			local alternate = unified_inventory.alternate[player_name]
 			local crafts = unified_inventory.crafts_table[item_name]
@@ -174,6 +174,14 @@ unified_inventory.register_page("craftguide", {
 			name = player_name.."craftrecipe"
 		})
 
+		-- fake buttons just to make 3x3 grid
+		for y = 1, 3 do
+		for x = 1, 3 do
+			formspec = formspec.."image_button["
+				..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;ui_blank_image.png;;]"
+		end 
+		end
+
 		if not craft then
 			craftinv:set_stack("output", 1, nil)
 			return {formspec=formspec}
@@ -195,12 +203,12 @@ unified_inventory.register_page("craftguide", {
 				if string.sub(item, 1, 6) == "group:" then
 					local group = string.sub(item, 7)
 					formspec = formspec.."image_button["
-						..(1.05 + x)..","..(0.05 + y)..";0.9,0.9;"
+						..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;"
 						.."ui_group.png;;"
 						..minetest.formspec_escape(group).."]"
 				else
 					formspec = formspec.."item_image_button["
-						..(1.05 + x)..","..(0.05 + y)..";0.9,0.9;"
+						..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;"
 						..minetest.formspec_escape(item)..";"
 						.."item_button_"
 						..minetest.formspec_escape(item)..";]"

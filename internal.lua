@@ -11,8 +11,7 @@ function unified_inventory.get_formspec(player, page)
 	local fsdata = nil
 
 	-- Background
-	formspec = formspec .. "background[-0.19,-0.2;14.38,10.55;ui_form_bg.png]"
-	
+	formspec = formspec .. "background[-0.19,-0.25;14.4,10.75;ui_form_bg.png]"
 	-- Current page
 	if unified_inventory.pages[page] then
 		fsdata = pagedef.get_formspec(player)
