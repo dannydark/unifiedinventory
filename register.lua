@@ -179,7 +179,7 @@ unified_inventory.register_page("craftguide", {
 		for x = 1, 3 do
 			formspec = formspec.."image_button["
 				..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;ui_blank_image.png;;]"
-		end 
+		end
 		end
 
 		if not craft then
