@@ -8,10 +8,16 @@ minetest.after(0.01, function()
 		   def.description and def.description ~= "" then
 			table.insert(unified_inventory.items_list, name)
 			local recipes = minetest.get_all_craft_recipes(name)
-			unified_inventory.crafts_table[name] = recipes or {}
+			if unified_inventory.crafts_table[name] == nil then
+				unified_inventory.crafts_table[name] = {}
+			end
+			if recipes then 
+				for i=1,#recipes,1 do
+					table.insert(unified_inventory.crafts_table[name],recipes[i])
+				end
+			end
 		end
 	end
-	--print(dump(unified_inventory.crafts_table))
 	table.sort(unified_inventory.items_list)
 	unified_inventory.items_list_size = #unified_inventory.items_list
 	print("Unified Inventory. inventory size: "..#unified_inventory.items_list)
@@ -64,17 +70,17 @@ end
 
 -- register_craft
 function unified_inventory.register_craft(options)
-	if not options.output then
+	if  options.output == nil then
 		return
 	end
 	local itemstack = ItemStack(options.output)
 	if itemstack:is_empty() then
 		return
 	end
-	unified_inventory.crafts_table[itemstack:get_name()] =
-			unified_inventory.crafts_table[itemstack:get_name()] or {}
-
-	table.insert(unified_inventory.crafts_table[itemstack:get_name()], options)
+	if unified_inventory.crafts_table[itemstack:get_name()] == nil then
+		unified_inventory.crafts_table[itemstack:get_name()] = {}
+	end
+	table.insert(unified_inventory.crafts_table[itemstack:get_name()],options)
 end
 
 function unified_inventory.register_page(name, def)
@@ -87,9 +93,7 @@ function unified_inventory.register_button(name, def)
 			unified_inventory.set_inventory_formspec(player, name)
 		end
 	end
-	
 	def.name = name
-	
 	table.insert(unified_inventory.buttons, def)
 end
 
