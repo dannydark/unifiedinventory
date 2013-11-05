@@ -121,6 +121,7 @@ unified_inventory.register_page("craft", {
 		local formspec = "background[0,1;8,3;ui_crafting_form.png]"
 		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting]"
+		formspec = formspec.."listcolors[#00000000;#00000000]"
 		formspec = formspec.."list[current_player;craftpreview;6,1;1,1;]"
 		formspec = formspec.."list[current_player;craft;2,1;3,3;]"
 		formspec = formspec.."label[7,2.5;Trash:]"
@@ -139,6 +140,7 @@ unified_inventory.register_page("craftguide", {
 		local formspec = "background[0,1;8,3;ui_craftguide_form.png]"
 		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
+		formspec = formspec.."listcolors[#00000000;#00000000]"
 		formspec = formspec.."list[detached:"..player_name.."craftrecipe;output;6,1;1,1;]"
 		formspec = formspec.."label[6,3.35;Method:]"
 		local item_name = unified_inventory.current_item[player_name]

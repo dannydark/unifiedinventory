@@ -12,6 +12,7 @@ unified_inventory.register_page("bags", {
 		formspec = formspec.."button[2,2;2,0.5;bag2;Bag 2]"
 		formspec = formspec.."button[4,2;2,0.5;bag3;Bag 3]"
 		formspec = formspec.."button[6,2;2,0.5;bag4;Bag 4]"
+		formspec = formspec.."listcolors[#00000000;#00000000]"
 		formspec = formspec.."list[detached:"..player_name.."_bags;bag1;0.5,1;1,1;]"
 		formspec = formspec.."list[detached:"..player_name.."_bags;bag2;2.5,1;1,1;]"
 		formspec = formspec.."list[detached:"..player_name.."_bags;bag3;4.5,1;1,1;]"
@@ -31,6 +32,7 @@ for i = 1, 4 do
 			local stack = player:get_inventory():get_stack("bag"..i, 1)
 			local image = stack:get_definition().inventory_image
 			local formspec = "image[7,0;1,1;"..image.."]"
+			formspec = formspec.."listcolors[#00000000;#00000000]"
 			formspec = formspec.."list[current_player;bag"..i.."contents;0,1;8,3;]"
 			local slots = stack:get_definition().groups.bagslots
 			if slots == 8 then
