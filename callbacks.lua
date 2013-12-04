@@ -49,6 +49,9 @@ minetest.register_on_joinplayer(function(player)
 end)
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "" then
+		return
+	end
 	local player_name = player:get_player_name()
 
 	for i, def in pairs(unified_inventory.buttons) do

@@ -48,6 +48,9 @@ for i = 1, 4 do
 end
 
 minetest.register_on_player_receive_fields(function(player, formname, fields)
+	if formname ~= "" then
+		return
+	end
 	for i = 1, 4 do
 		if fields["bag"..i] then
 			local stack = player:get_inventory():get_stack("bag"..i, 1)
