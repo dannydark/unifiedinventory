@@ -62,7 +62,7 @@ function unified_inventory.get_formspec(player, page)
 	local item = {}
 	for y = 0, 9 do
 	for x = 0, 7 do
-		name = unified_inventory.filtered_items_list[player_name][list_index]	
+		local name = unified_inventory.filtered_items_list[player_name][list_index]	
 		if minetest.registered_items[name] then
 			formspec = formspec.."item_image_button["
 					..(8.2 + x * 0.7)..","
