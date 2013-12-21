@@ -165,16 +165,16 @@ unified_inventory.register_page("craftguide", {
 				formspec = formspec.."label[6,3.75;"..method.."]"
 				if allow_auto_craft then
 					formspec = formspec.."label[6,1.95;Copy to craft grid:]"
-					formspec = formspec.."button[6,2.5;0.6,0.5;craftguide_craft_1;1]"
-					formspec = formspec.."button[6.6,2.5;0.6,0.5;craftguide_craft_10;10]"
-					formspec = formspec.."button[7.2,2.5;0.6,0.5;craftguide_craft_max;All]"
+							.."button[6,2.5;0.6,0.5;craftguide_craft_1;1]"
+							.."button[6.6,2.5;0.6,0.5;craftguide_craft_10;10]"
+							.."button[7.2,2.5;0.6,0.5;craftguide_craft_max;All]"
 				end
 			end
 			if alternates > 1 then
 				formspec = formspec.."label[0,2.6;Recipe "
 						..tostring(alternate).." of "
 						..tostring(alternates).."]"
-				formspec = formspec.."button[0,3.15;2,1;alternate;Alternate]"
+						.."button[0,3.15;2,1;alternate;Alternate]"
 			end
 		end
 
