@@ -92,14 +92,9 @@ function unified_inventory.apply_filter(player, filter)
 	local player_name = player:get_player_name() 
 	local size = 0
 	local lfilter = string.lower(filter)
-	if lfilter ~= "" then 
-		for c in lfilter:gmatch(".") do
-			if c == '[' or c == ']' or c == '{' or c == '}' or
-			   c == '(' or c == ')' or c == '%' then 
-				lfilter = ""
-				break
-			end
-		end
+	if not pcall(function() ("technic:test"):find(lfilter) end) then
+		-- Filter is invalid
+		lfilter = ""
 	end
 	unified_inventory.filtered_items_list[player_name]={}
 	for name, def in pairs(minetest.registered_items) do
