@@ -62,7 +62,7 @@ function unified_inventory.get_formspec(player, page)
 	local item = {}
 	for y = 0, 9 do
 	for x = 0, 7 do
-		local name = unified_inventory.filtered_items_list[player_name][list_index]	
+		local name = unified_inventory.filtered_items_list[player_name][list_index]
 		if minetest.registered_items[name] then
 			formspec = formspec.."item_image_button["
 					..(8.2 + x * 0.7)..","
@@ -89,7 +89,7 @@ end
 
 --apply filter to the inventory list (create filtered copy of full one)
 function unified_inventory.apply_filter(player, filter)
-	local player_name = player:get_player_name() 
+	local player_name = player:get_player_name()
 	local size = 0
 	local lfilter = string.lower(filter)
 	if not pcall(function() ("technic:test"):find(lfilter) end) then

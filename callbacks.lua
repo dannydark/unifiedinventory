@@ -11,7 +11,7 @@ minetest.register_on_joinplayer(function(player)
 	unified_inventory.current_item[player_name] = nil
 	unified_inventory.set_inventory_formspec(player,
 			unified_inventory.default)
-	
+
 	-- Crafting guide inventories
 	local inv = minetest.create_detached_inventory(player_name.."craftrecipe", {
 		allow_put = function(inv, listname, index, stack, player)
@@ -62,7 +62,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			return
 		end
 	end
-	
+
 	-- Inventory page controls
 	local start = math.floor(
 		unified_inventory.current_index[player_name] / 80 + 1)
@@ -70,7 +70,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local pagemax = math.floor(
 		(#unified_inventory.filtered_items_list[player_name] - 1)
 		/ (80) + 1)
-	
+
 	if fields.start_list then
 		minetest.sound_play("paperflip1",
 				{to_player=player_name, gain = 1.0})
@@ -155,8 +155,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				unified_inventory.current_page[player_name])
 		minetest.sound_play("paperflip2",
 				{to_player=player_name, gain = 1.0})
-	end	
-	
+	end
+
 	-- alternate button
 	if fields.alternate then
 		minetest.sound_play("click",
@@ -174,7 +174,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				if alternate > alternates then
 					alternate = 1
 				end
-				unified_inventory.alternate[player_name] = alternate		
+				unified_inventory.alternate[player_name] = alternate
 				unified_inventory.set_inventory_formspec(player,
 						unified_inventory.current_page[player_name])
 			end

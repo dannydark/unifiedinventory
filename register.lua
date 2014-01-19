@@ -62,7 +62,7 @@ unified_inventory.register_button("misc_set_day", {
 	image = "ui_sun_icon.png",
 	action = function(player)
 		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {settime=true}) then 
+		if minetest.check_player_privs(player_name, {settime=true}) then
 			minetest.sound_play("birds",
 					{to_player=player_name, gain = 1.0})
 			minetest.set_timeofday((6000 % 24000) / 24000)
@@ -90,7 +90,7 @@ unified_inventory.register_button("misc_set_night", {
 		else
 			minetest.chat_send_player(player_name,
 					"You don't have the"
-					.." settime priviledge!")	
+					.." settime priviledge!")
 		end
 	end,
 })

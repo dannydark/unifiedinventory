@@ -11,7 +11,7 @@ minetest.after(0.01, function()
 			if unified_inventory.crafts_table[name] == nil then
 				unified_inventory.crafts_table[name] = {}
 			end
-			if recipes then 
+			if recipes then
 				for i=1,#recipes,1 do
 					table.insert(unified_inventory.crafts_table[name],recipes[i])
 				end
