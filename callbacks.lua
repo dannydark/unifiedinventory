@@ -118,6 +118,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if string.sub(name, 1, 12) == "item_button_" then
 			clicked_item = string.sub(name, 13)
 			break
+		elseif string.sub(name, 1, 11) == "item_group_" then
+			minetest.sound_play("click",
+					{to_player=player_name, gain = 0.1})
+			unified_inventory.apply_filter(player, "group:"..string.sub(name, 12))
+			return
 		end
 	end
 	if clicked_item then

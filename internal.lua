@@ -97,18 +97,36 @@ function unified_inventory.apply_filter(player, filter)
 		lfilter = ""
 	end
 	unified_inventory.filtered_items_list[player_name]={}
-	for name, def in pairs(minetest.registered_items) do
-		if (not def.groups.not_in_creative_inventory or
-		   def.groups.not_in_creative_inventory == 0)
-		   and def.description and def.description ~= "" then
-			local lname = string.lower(name)
-			local ldesc = string.lower(def.description)
-			if string.find(lname, lfilter) or string.find(ldesc, lfilter) then
-				table.insert(unified_inventory.filtered_items_list[player_name], name)
-				size = size + 1
+	if lfilter:sub(1, 6) == "group:" then
+		local groups = lfilter:sub(7):split(",")
+		for name, def in pairs(minetest.registered_items) do
+			if def.groups then
+				local all = true
+				for _, group in ipairs(groups) do
+					if not (def.groups[group] and (def.groups[group] > 0)) then
+						all = false
+						break
+					end
+				end
+				if all then
+					table.insert(unified_inventory.filtered_items_list[player_name], name)
+					size = size + 1
+				end
 			end
 		end
-	
+	else
+		for name, def in pairs(minetest.registered_items) do
+			if (not def.groups.not_in_creative_inventory or
+			   def.groups.not_in_creative_inventory == 0)
+			   and def.description and def.description ~= "" then
+				local lname = string.lower(name)
+				local ldesc = string.lower(def.description)
+				if string.find(lname, lfilter) or string.find(ldesc, lfilter) then
+					table.insert(unified_inventory.filtered_items_list[player_name], name)
+					size = size + 1
+				end
+			end
+		end
 	end
 	table.sort(unified_inventory.filtered_items_list[player_name])
 	unified_inventory.filtered_items_list_size[player_name] = size

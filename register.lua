@@ -213,7 +213,8 @@ unified_inventory.register_page("craftguide", {
 					local group = string.sub(item, 7)
 					formspec = formspec.."image_button["
 						..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;"
-						.."ui_group.png;;"
+						.."ui_group.png;"
+						.."item_group_"..minetest.formspec_escape(group)..";"
 						..minetest.formspec_escape(group).."]"
 				else
 					formspec = formspec.."item_image_button["
