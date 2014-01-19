@@ -8,19 +8,16 @@ minetest.after(0.01, function()
 		   def.description and def.description ~= "" then
 			table.insert(unified_inventory.items_list, name)
 			local recipes = minetest.get_all_craft_recipes(name)
-			if unified_inventory.crafts_table[name] == nil then
-				unified_inventory.crafts_table[name] = {}
-			end
 			if recipes then
-				for i=1,#recipes,1 do
-					table.insert(unified_inventory.crafts_table[name],recipes[i])
-				end
+				unified_inventory.crafts_table[name] = recipes
+			else
+				unified_inventory.crafts_table[name] = {}
 			end
 		end
 	end
 	table.sort(unified_inventory.items_list)
 	unified_inventory.items_list_size = #unified_inventory.items_list
-	print("Unified Inventory. inventory size: "..#unified_inventory.items_list)
+	print("Unified Inventory. inventory size: "..unified_inventory.items_list_size)
 end)
 
 
