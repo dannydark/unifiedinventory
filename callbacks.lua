@@ -79,33 +79,21 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		/ (80) + 1)
 
 	if fields.start_list then
-		minetest.sound_play("paperflip1",
-				{to_player=player_name, gain = 1.0})
 		start_i = 1
 	end
 	if fields.rewind1 then
-		minetest.sound_play("paperflip1",
-				{to_player=player_name, gain = 1.0})
 		start_i = start_i - 1
 	end
 	if fields.forward1 then
-		minetest.sound_play("paperflip1",
-				{to_player=player_name, gain = 1.0})
 		start_i = start_i + 1
 	end
 	if fields.rewind3 then
-		minetest.sound_play("paperflip1",
-				{to_player=player_name, gain = 1.0})
 		start_i = start_i - 3
 	end
 	if fields.forward3 then
-		minetest.sound_play("paperflip1",
-				{to_player=player_name, gain = 1.0})
 		start_i = start_i + 3
 	end
 	if fields.end_list then
-		minetest.sound_play("paperflip1",
-				{to_player=player_name, gain = 1.0})
 		start_i = pagemax
 	end
 	if start_i < 1 then
@@ -115,6 +103,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		start_i = pagemax
 	end
 	if not (start_i	== start) then
+		minetest.sound_play("paperflip1",
+				{to_player=player_name, gain = 1.0})
 		unified_inventory.current_index[player_name] = (start_i - 1) * 80 + 1
 		unified_inventory.set_inventory_formspec(player,
 				unified_inventory.current_page[player_name])
