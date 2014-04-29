@@ -27,6 +27,21 @@ minetest.after(0.01, function()
 	table.sort(unified_inventory.items_list)
 	unified_inventory.items_list_size = #unified_inventory.items_list
 	print("Unified Inventory. inventory size: "..unified_inventory.items_list_size)
+	for _, name in ipairs(unified_inventory.items_list) do
+		local def = minetest.registered_items[name]
+		if type(def.drop) == "string" then
+			local dstack = ItemStack(def.drop)
+			if not dstack:is_empty() and dstack:get_name() ~= name then
+				unified_inventory.register_craft({
+					type = "digging",
+					items = {name},
+					output = def.drop,
+					width = 0,
+				})
+
+			end
+		end
+	end
 end)
 
 
