@@ -14,16 +14,14 @@ minetest.after(0.01, function()
 			table.insert(unified_inventory.items_list, name)
 			local all_names = rev_aliases[name] or {}
 			table.insert(all_names, name)
-			local all_recipes = {}
 			for _, name in ipairs(all_names) do
 				local recipes = minetest.get_all_craft_recipes(name)
 				if recipes then
 					for _, recipe in ipairs(recipes) do
-						table.insert(all_recipes, recipe)
+						unified_inventory.register_craft(recipe)
 					end
 				end
 			end
-			unified_inventory.crafts_table[name] = all_recipes
 		end
 	end
 	table.sort(unified_inventory.items_list)
