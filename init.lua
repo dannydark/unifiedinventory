@@ -8,6 +8,7 @@ unified_inventory = {}
 unified_inventory.activefilter = {}
 unified_inventory.alternate = {}
 unified_inventory.current_page = {}
+unified_inventory.current_searchbox = {}
 unified_inventory.current_index = {}
 unified_inventory.current_item = {}
 unified_inventory.crafts_table = {}

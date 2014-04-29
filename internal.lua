@@ -50,7 +50,7 @@ function unified_inventory.get_formspec(player, page)
 	formspec = formspec .. "image_button["..(start_x + 0.6 * 5)..",9;.8,.8;ui_skip_forward_icon.png;end_list;]"
 
 	-- Search box
-	formspec = formspec .. "field[9.5,8.325;3,1;searchbox;;]"
+	formspec = formspec .. "field[9.5,8.325;3,1;searchbox;;"..minetest.formspec_escape(unified_inventory.current_searchbox[player_name]).."]"
 	formspec = formspec .. "image_button[12.2,8.1;.8,.8;ui_search_icon.png;searchbutton;]"
 
 	-- Items list

@@ -7,6 +7,7 @@ minetest.register_on_joinplayer(function(player)
 			unified_inventory.items_list
 	unified_inventory.activefilter[player_name] = ""
 	unified_inventory.apply_filter(player, "")
+	unified_inventory.current_searchbox[player_name] = ""
 	unified_inventory.alternate[player_name] = 1
 	unified_inventory.current_item[player_name] = nil
 	unified_inventory.set_inventory_formspec(player,
@@ -53,6 +54,12 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		return
 	end
 	local player_name = player:get_player_name()
+
+	-- always take new search text, even if not searching on it yet
+	if fields.searchbox ~= nil and fields.searchbox ~= unified_inventory.current_searchbox[player_name] then
+		unified_inventory.current_searchbox[player_name] = fields.searchbox
+		unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
+	end
 
 	for i, def in pairs(unified_inventory.buttons) do
 		if fields[def.name] then
@@ -150,7 +157,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	if fields.searchbutton then
-		unified_inventory.apply_filter(player, fields.searchbox)
+		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name])
+		unified_inventory.current_searchbox[player_name] = ""
 		unified_inventory.set_inventory_formspec(player,
 				unified_inventory.current_page[player_name])
 		minetest.sound_play("paperflip2",
