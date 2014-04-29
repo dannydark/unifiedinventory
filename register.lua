@@ -141,40 +141,14 @@ unified_inventory.register_page("craftguide", {
 		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
-		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
-		formspec = formspec.."label[6,3.35;Method:]"
 		local item_name = unified_inventory.current_item[player_name]
-		local craft = nil
+		local alternate, alternates, craft, craft_type
 		if item_name then
-			formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
-			local alternates = 0
-			local alternate = unified_inventory.alternate[player_name]
+			alternate = unified_inventory.alternate[player_name]
 			local crafts = unified_inventory.crafts_table[item_name]
 			if crafts ~= nil and #crafts > 0 then
 				alternates = #crafts
 				craft = crafts[alternate]
-				local method = craft.type
-				local allow_auto_craft = ((method == "normal") or (method == "shapeless"))
-				if craft.type == "normal" then
-					method = "crafting"
-				elseif craft.type == "shapeless" then
-					method = "shapeless crafting"
-				elseif craft.type == "alloy" then
-					method = "alloy cooking"
-				end
-				formspec = formspec.."label[6,3.75;"..method.."]"
-				if allow_auto_craft then
-					formspec = formspec.."label[6,1.95;Copy to craft grid:]"
-							.."button[6,2.5;0.6,0.5;craftguide_craft_1;1]"
-							.."button[6.6,2.5;0.6,0.5;craftguide_craft_10;10]"
-							.."button[7.2,2.5;0.6,0.5;craftguide_craft_max;All]"
-				end
-			end
-			if alternates > 1 then
-				formspec = formspec.."label[0,2.6;Recipe "
-						..tostring(alternate).." of "
-						..tostring(alternates).."]"
-						.."button[0,3.15;2,1;alternate;Alternate]"
 			end
 		end
 
@@ -183,29 +157,35 @@ unified_inventory.register_page("craftguide", {
 			name = player_name.."craftrecipe"
 		})
 
-		-- fake buttons just to make 3x3 grid
-		for y = 1, 3 do
-		for x = 1, 3 do
-			formspec = formspec.."image_button["
-				..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;ui_blank_image.png;;]"
-		end
-		end
-
 		if not craft then
 			craftinv:set_stack("output", 1, nil)
 			return {formspec=formspec}
 		end
 
+		craft_type = unified_inventory.registered_craft_types[craft.type] or unified_inventory.canonicalise_craft_type(craft.type, {})
+		formspec = formspec.."label[6,3.35;Method:]"
+		formspec = formspec.."label[6,3.75;"..minetest.formspec_escape(craft_type.description).."]"
+
 		craftinv:set_stack("output", 1, craft.output)
+		formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
+		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
+
+		-- fake buttons just to make grid
+		for y = 1, craft_type.height do
+		for x = 1, craft_type.width do
+			formspec = formspec.."image_button["
+				..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;ui_blank_image.png;;]"
+		end
+		end
 
 		local width = craft.width
 		if width == 0 then
 			-- Shapeless recipe
-			width = 3
+			width = craft_type.width
 		end
 
 		local i = 1
-		for y = 1, 3 do
+		for y = 1, craft_type.height do
 		for x = 1, width do
 			local item = craft.items[i]
 			if item then
@@ -226,6 +206,20 @@ unified_inventory.register_page("craftguide", {
 			end
 			i = i + 1
 		end
+		end
+
+		if craft_type.uses_crafting_grid then
+			formspec = formspec.."label[6,1.95;Copy to craft grid:]"
+					.."button[6,2.5;0.6,0.5;craftguide_craft_1;1]"
+					.."button[6.6,2.5;0.6,0.5;craftguide_craft_10;10]"
+					.."button[7.2,2.5;0.6,0.5;craftguide_craft_max;All]"
+		end
+
+		if alternates > 1 then
+			formspec = formspec.."label[0,2.6;Recipe "
+					..tostring(alternate).." of "
+					..tostring(alternates).."]"
+					.."button[0,3.15;2,1;alternate;Alternate]"
 		end
 		return {formspec=formspec}
 	end,

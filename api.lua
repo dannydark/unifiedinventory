@@ -98,11 +98,54 @@ function unified_inventory.register_craft(options)
 	if itemstack:is_empty() then
 		return
 	end
+	if options.type == "normal" and options.width == 0 then
+		options = { type = "shapeless", items = options.items, output = options.output, width = 0 }
+	end
 	if unified_inventory.crafts_table[itemstack:get_name()] == nil then
 		unified_inventory.crafts_table[itemstack:get_name()] = {}
 	end
 	table.insert(unified_inventory.crafts_table[itemstack:get_name()],options)
 end
+
+local craft_type_defaults = {
+	width = 3,
+	height = 3,
+	uses_crafting_grid = false,
+}
+function unified_inventory.canonicalise_craft_type(name, options)
+	if not options.description then options.description = name end
+	setmetatable(options, {__index = craft_type_defaults})
+	return options
+end
+function unified_inventory.register_craft_type(name, options)
+	unified_inventory.registered_craft_types[name] = unified_inventory.canonicalise_craft_type(name, options)
+end
+
+unified_inventory.register_craft_type("normal", {
+	description = "Crafting",
+	width = 3,
+	height = 3,
+	uses_crafting_grid = true,
+})
+
+unified_inventory.register_craft_type("shapeless", {
+	description = "Mixing",
+	width = 3,
+	height = 3,
+	uses_crafting_grid = true,
+})
+
+unified_inventory.register_craft_type("cooking", {
+	description = "Cooking",
+	width = 1,
+	height = 1,
+})
+
+unified_inventory.register_craft_type("digging", {
+	description = "Digging",
+	width = 1,
+	height = 1,
+})
 
 function unified_inventory.register_page(name, def)
 	unified_inventory.pages[name] = def

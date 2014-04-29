@@ -11,6 +11,7 @@ unified_inventory.current_page = {}
 unified_inventory.current_searchbox = {}
 unified_inventory.current_index = {}
 unified_inventory.current_item = {}
+unified_inventory.registered_craft_types = {}
 unified_inventory.crafts_table = {}
 unified_inventory.crafts_table_count = 0
 unified_inventory.players = {}
