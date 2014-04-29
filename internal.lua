@@ -54,29 +54,35 @@ function unified_inventory.get_formspec(player, page)
 	formspec = formspec .. "image_button[12.2,8.1;.8,.8;ui_search_icon.png;searchbutton;]"
 
 	-- Items list
-	local list_index = unified_inventory.current_index[player_name]
-	local page = math.floor(list_index / (80) + 1)
-	local pagemax = math.floor(
-		(#unified_inventory.filtered_items_list[player_name] - 1)
-			/ (80) + 1)
-	local item = {}
-	for y = 0, 9 do
-	for x = 0, 7 do
-		local name = unified_inventory.filtered_items_list[player_name][list_index]
-		if minetest.registered_items[name] then
-			formspec = formspec.."item_image_button["
-					..(8.2 + x * 0.7)..","
-					..(1   + y * 0.7)..";.81,.81;"
-					..name..";item_button_"
-					..name..";]"
-			list_index = list_index + 1
+	if #unified_inventory.filtered_items_list[player_name] == 0 then
+		formspec = formspec.."label[8.2,0;No matching items]"
+	else
+		local list_index = unified_inventory.current_index[player_name]
+		local page = math.floor(list_index / (80) + 1)
+		local pagemax = math.floor(
+			(#unified_inventory.filtered_items_list[player_name] - 1)
+				/ (80) + 1)
+		local item = {}
+		for y = 0, 9 do
+		for x = 0, 7 do
+			local name = unified_inventory.filtered_items_list[player_name][list_index]
+			if minetest.registered_items[name] then
+				formspec = formspec.."item_image_button["
+						..(8.2 + x * 0.7)..","
+						..(1   + y * 0.7)..";.81,.81;"
+						..name..";item_button_"
+						..name..";]"
+				list_index = list_index + 1
+			end
 		end
+		end
+		formspec = formspec.."label[8.2,0;Page:]"
+		formspec = formspec.."label[9,0;"..page.." of "..pagemax.."]"
 	end
+	if unified_inventory.activefilter[player_name] ~= "" then
+		formspec = formspec.."label[8.2,0.4;Filter:]"
+		formspec = formspec.."label[9,0.4;"..minetest.formspec_escape(unified_inventory.activefilter[player_name]).."]"
 	end
-	formspec = formspec.."label[8.2,0;Page:]"
-	formspec = formspec.."label[9,0;"..page.." of "..pagemax.."]"
-	formspec = formspec.."label[8.2,0.4;Filter:]"
-	formspec = formspec.."label[9,0.4;"..minetest.formspec_escape(unified_inventory.activefilter[player_name]).."]"
 	return formspec
 end
 
