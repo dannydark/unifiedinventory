@@ -128,7 +128,7 @@ unified_inventory.register_page("craft", {
 		formspec = formspec.."list[detached:trash;main;7,3;1,1;]"
 		if unified_inventory.is_creative(player_name) then
 			formspec = formspec.."label[0,2.5;Refill:]"
-			formspec = formspec.."list[detached:"..player_name.."refill;main;0,3;1,1;]"
+			formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."refill;main;0,3;1,1;]"
 		end
 		return {formspec=formspec}
 	end,
@@ -141,12 +141,12 @@ unified_inventory.register_page("craftguide", {
 		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
-		formspec = formspec.."list[detached:"..player_name.."craftrecipe;output;6,1;1,1;]"
+		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
 		formspec = formspec.."label[6,3.35;Method:]"
 		local item_name = unified_inventory.current_item[player_name]
 		local craft = nil
 		if item_name then
-			formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..item_name..";]"
+			formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
 			local alternates = 0
 			local alternate = unified_inventory.alternate[player_name]
 			local crafts = unified_inventory.crafts_table[item_name]

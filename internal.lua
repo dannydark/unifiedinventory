@@ -76,7 +76,7 @@ function unified_inventory.get_formspec(player, page)
 	formspec = formspec.."label[8.2,0;Page:]"
 	formspec = formspec.."label[9,0;"..page.." of "..pagemax.."]"
 	formspec = formspec.."label[8.2,0.4;Filter:]"
-	formspec = formspec.."label[9,0.4;"..unified_inventory.activefilter[player_name].."]"
+	formspec = formspec.."label[9,0.4;"..minetest.formspec_escape(unified_inventory.activefilter[player_name]).."]"
 	return formspec
 end
 
