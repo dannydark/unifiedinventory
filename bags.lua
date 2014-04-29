@@ -32,6 +32,7 @@ for i = 1, 4 do
 			local stack = player:get_inventory():get_stack("bag"..i, 1)
 			local image = stack:get_definition().inventory_image
 			local formspec = "image[7,0;1,1;"..image.."]"
+			formspec = formspec.."label[0,0;Bag "..i.."]"
 			formspec = formspec.."listcolors[#00000000;#00000000]"
 			formspec = formspec.."list[current_player;bag"..i.."contents;0,1;8,3;]"
 			local slots = stack:get_definition().groups.bagslots
