@@ -1,3 +1,11 @@
+local function default_refill(stack)
+	stack:set_count(stack:get_stack_max())
+	local itemdef = minetest.registered_items[stack:get_name()]
+	if itemdef and (itemdef.wear_represents or "mechanical_wear") == "mechanical_wear" and stack:get_wear() ~= 0 then
+		stack:set_wear(0)
+	end
+	return stack
+end
 
 minetest.register_on_joinplayer(function(player)
 	local player_name = player:get_player_name()
@@ -40,7 +48,8 @@ minetest.register_on_joinplayer(function(player)
 		end,
 		on_put = function(inv, listname, index, stack, player)
 			local player_name = player:get_player_name()
-			stack:set_count(stack:get_stack_max())
+			local handle_refill = (minetest.registered_items[stack:get_name()] or {}).on_refill or default_refill
+			stack = handle_refill(stack)
 			inv:set_stack(listname, index, stack)
 			minetest.sound_play("electricity",
 					{to_player=player_name, gain = 1.0})
