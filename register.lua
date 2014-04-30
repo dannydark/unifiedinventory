@@ -137,38 +137,37 @@ unified_inventory.register_page("craft", {
 unified_inventory.register_page("craftguide", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
-		local formspec = "background[0,1;8,3;ui_craftguide_form.png]"
+		local formspec = ""
 		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
-		local item_name = unified_inventory.current_item[player_name]
-		local alternate, alternates, craft, craft_type
-		if item_name then
-			alternate = unified_inventory.alternate[player_name]
-			local crafts = unified_inventory.crafts_table[item_name]
-			if crafts ~= nil and #crafts > 0 then
-				alternates = #crafts
-				craft = crafts[alternate]
-			end
-		end
-
 		local craftinv = minetest.get_inventory({
 			type = "detached",
 			name = player_name.."craftrecipe"
 		})
+		local item_name = unified_inventory.current_item[player_name]
+		if not item_name then return {formspec=formspec} end
+		formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
+		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
 
+		local alternate, alternates, craft, craft_type
+		alternate = unified_inventory.alternate[player_name]
+		local crafts = unified_inventory.crafts_table[item_name]
+		if crafts ~= nil and #crafts > 0 then
+			alternates = #crafts
+			craft = crafts[alternate]
+		end
 		if not craft then
-			craftinv:set_stack("output", 1, nil)
+			craftinv:set_stack("output", 1, item_name)
+			formspec = formspec.."label[6,3.35;No recipes]"
 			return {formspec=formspec}
 		end
 
+		formspec = formspec.."background[0,1;8,3;ui_craftguide_form.png]"
 		craft_type = unified_inventory.registered_craft_types[craft.type] or unified_inventory.canonicalise_craft_type(craft.type, {})
 		formspec = formspec.."label[6,3.35;Method:]"
 		formspec = formspec.."label[6,3.75;"..minetest.formspec_escape(craft_type.description).."]"
-
 		craftinv:set_stack("output", 1, craft.output)
-		formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
-		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
 
 		-- fake buttons just to make grid
 		for y = 1, craft_type.height do
