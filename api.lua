@@ -147,6 +147,10 @@ unified_inventory.register_craft_type("digging", {
 	height = 1,
 })
 
+function unified_inventory.register_group_representative_item(groupname, itemname)
+	unified_inventory.registered_group_representative_items[groupname] = itemname
+end
+
 function unified_inventory.register_page(name, def)
 	unified_inventory.pages[name] = def
 end

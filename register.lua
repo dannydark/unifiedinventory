@@ -134,6 +134,74 @@ unified_inventory.register_page("craft", {
 	end,
 })
 
+-- group_representative_item(): select representative item for a group
+--
+-- This is used when displaying craft recipes, where an ingredient is
+-- specified by group rather than as a specific item.  A single-item group
+-- is represented by that item, with the single-item status signalled
+-- so that stack_image_button() can treat it as just the item.  If the
+-- group contains no items at all, it will be treated as containing a
+-- single unknown item.
+--
+-- Within a multiple-item group, we prefer to use an item that has the
+-- same specific name as the group, and if there are more than one of
+-- those items we prefer the one specified by the default mod if there
+-- is one.  If this produces a bad result, the mod defining a group can
+-- register its preference for which item should represent the group,
+-- and we'll use that instead if possible.  Also, for a handful of groups
+-- (predating this registration system) we have built-in preferences
+-- that are used like registered preferences.  Among equally-preferred
+-- items, we just pick the one with the lexicographically earliest name,
+-- for determinism.
+local builtin_group_representative_items = {
+	mesecon_conductor_craftable = "mesecons:wire_00000000_off",
+	stone = "default:cobble",
+	wool = "wool:white",
+}
+local function compute_group_representative_item(groupspec)
+	local groupname = string.sub(groupspec, 7)
+	local candidate_items = {}
+	for itemname, itemdef in pairs(minetest.registered_items) do
+		if itemdef.groups[groupname] and itemdef.groups[groupname] ~= 0 then
+			table.insert(candidate_items, itemname)
+		end
+	end
+	print("group spec "..groupspec.." has "..#candidate_items.." candidates")
+	for _, i in ipairs(candidate_items) do
+		print("    ", i)
+	end
+	if #candidate_items == 0 then return { item = "unobtainium!", sole = true } end
+	if #candidate_items == 1 then return { item = candidate_items[1], sole = true } end
+	local bestitem = ""
+	local bestpref = 0
+	for _, item in ipairs(candidate_items) do
+		local pref
+		if item == unified_inventory.registered_group_representative_items[groupname] then
+			pref = 5
+		elseif item == builtin_group_representative_items[groupname] then
+			pref = 4
+		elseif item == "default:"..groupname then
+			pref = 3
+		elseif item:gsub("^[^:]*:", "") == groupname then
+			pref = 2
+		else
+			pref = 1
+		end
+		if pref > bestpref or (pref == bestpref and item < bestitem) then
+			bestitem = item
+			bestpref = pref
+		end
+	end
+	return { item = bestitem, sole = false }
+end
+local group_representative_item_cache = {}
+local function group_representative_item(groupspec)
+	if not group_representative_item_cache[groupspec] then
+		group_representative_item_cache[groupspec] = compute_group_representative_item(groupspec)
+	end
+	return group_representative_item_cache[groupspec]
+end
+
 -- stack_image_button(): generate a form button displaying a stack of items
 --
 -- Normally a simple item_image_button[] is used.  If the stack contains
@@ -147,24 +215,29 @@ unified_inventory.register_page("craft", {
 -- replaced as soon as the engine adds support for a proper item count,
 -- or at least label placement control, on buttons.
 --
--- The specified item may be a group.  In that case, an image_button[]
--- is used, displaying an image that just indicates grouping, with a
--- label giving the name of the specific group.  It very often happens
--- that the group name doesn't fit within the confines of the button and
--- gets cropped.  Group names are also not brilliantly readable against
--- the background of the group image.
+-- The specified item may be a group.  In that case, the group will be
+-- represented by some item in the group, along with a flag indicating
+-- that it's a group.  If the group contains only one item, it will be
+-- treated as if that item had been specified directly.
 local function stack_image_button(x, y, w, h, buttonname_prefix, stackstring)
 	local st = ItemStack(stackstring)
-	local n = st:get_name()
+	local specitem = st:get_name()
 	local c = st:get_count()
-	local clab = c == 1 and "" or string.format("%9d", c)
-	local buttonname = buttonname_prefix..n
-	local xywh = x..","..y..";"..w..","..h
-	if string.sub(n, 1, 6) == "group:" then
-		return "image_button["..xywh..";".."ui_group.png;"..minetest.formspec_escape(buttonname)..";"..minetest.formspec_escape(string.sub(n, 7)).."\n\n"..clab.."]"
+	local clab = c == 1 and "       " or string.format("%7d", c)
+	local gflag, displayitem, selectitem
+	if string.sub(specitem, 1, 6) == "group:" then
+		local gri = group_representative_item(specitem)
+		gflag = not gri.sole
+		displayitem = gri.item
+		selectitem = gri.sole and gri.item or specitem
 	else
-		return "item_image_button["..xywh..";"..minetest.formspec_escape(n)..";"..minetest.formspec_escape(buttonname_prefix..n)..";\n\n"..clab.."]"
+		gflag = false
+		displayitem = specitem
+		selectitem = specitem
 	end
+	local label = string.format("\n\n%s%7d", gflag and "G" or "  ", c):gsub(" 1$", " .")
+	if label == "\n\n        ." then label = "" end
+	return "item_image_button["..x..","..y..";"..w..","..h..";"..minetest.formspec_escape(displayitem)..";"..minetest.formspec_escape(buttonname_prefix..selectitem)..";"..label.."]"
 end
 
 unified_inventory.register_page("craftguide", {
