@@ -96,46 +96,37 @@ end
 --apply filter to the inventory list (create filtered copy of full one)
 function unified_inventory.apply_filter(player, filter)
 	local player_name = player:get_player_name()
-	local size = 0
 	local lfilter = string.lower(filter)
 	if not pcall(function() ("technic:test"):find(lfilter) end) then
 		-- Filter is invalid
 		lfilter = ""
 	end
-	unified_inventory.filtered_items_list[player_name]={}
+	local ffilter
 	if lfilter:sub(1, 6) == "group:" then
 		local groups = lfilter:sub(7):split(",")
-		for name, def in pairs(minetest.registered_items) do
-			if def.groups then
-				local all = true
-				for _, group in ipairs(groups) do
-					if not (def.groups[group] and (def.groups[group] > 0)) then
-						all = false
-						break
-					end
-				end
-				if all then
-					table.insert(unified_inventory.filtered_items_list[player_name], name)
-					size = size + 1
+		ffilter = function(name, def)
+			for _, group in ipairs(groups) do
+				if not ((def.groups[group] or 0) > 0) then
+					return false
 				end
 			end
+			return true
 		end
 	else
-		for name, def in pairs(minetest.registered_items) do
-			if (not def.groups.not_in_creative_inventory or
-			   def.groups.not_in_creative_inventory == 0)
-			   and def.description and def.description ~= "" then
-				local lname = string.lower(name)
-				local ldesc = string.lower(def.description)
-				if string.find(lname, lfilter) or string.find(ldesc, lfilter) then
-					table.insert(unified_inventory.filtered_items_list[player_name], name)
-					size = size + 1
-				end
-			end
+		ffilter = function(name, def)
+			local lname = string.lower(name)
+			local ldesc = string.lower(def.description)
+			return string.find(lname, lfilter) or string.find(ldesc, lfilter)
+		end
+	end
+	unified_inventory.filtered_items_list[player_name]={}
+	for name, def in pairs(minetest.registered_items) do
+		if (def.groups.not_in_creative_inventory or 0) == 0 and (def.description or "") ~= "" and ffilter(name, def) then
+			table.insert(unified_inventory.filtered_items_list[player_name], name)
 		end
 	end
 	table.sort(unified_inventory.filtered_items_list[player_name])
-	unified_inventory.filtered_items_list_size[player_name] = size
+	unified_inventory.filtered_items_list_size[player_name] = #unified_inventory.filtered_items_list[player_name]
 	unified_inventory.current_index[player_name] = 1
 	unified_inventory.activefilter[player_name] = filter
 	unified_inventory.set_inventory_formspec(player,

@@ -162,7 +162,7 @@ local function compute_group_representative_item(groupspec)
 	local groupname = string.sub(groupspec, 7)
 	local candidate_items = {}
 	for itemname, itemdef in pairs(minetest.registered_items) do
-		if itemdef.groups[groupname] and itemdef.groups[groupname] ~= 0 then
+		if (itemdef.groups.not_in_creative_inventory or 0) == 0 and (itemdef.groups[groupname] or 0) ~= 0 then
 			table.insert(candidate_items, itemname)
 		end
 	end
