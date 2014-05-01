@@ -166,10 +166,6 @@ local function compute_group_representative_item(groupspec)
 			table.insert(candidate_items, itemname)
 		end
 	end
-	print("group spec "..groupspec.." has "..#candidate_items.." candidates")
-	for _, i in ipairs(candidate_items) do
-		print("    ", i)
-	end
 	if #candidate_items == 0 then return { item = "unobtainium!", sole = true } end
 	if #candidate_items == 1 then return { item = candidate_items[1], sole = true } end
 	local bestitem = ""
