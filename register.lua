@@ -134,6 +134,39 @@ unified_inventory.register_page("craft", {
 	end,
 })
 
+-- stack_image_button(): generate a form button displaying a stack of items
+--
+-- Normally a simple item_image_button[] is used.  If the stack contains
+-- more than one item, item_image_button[] doesn't have an option to
+-- display an item count in the way that an inventory slot does, so
+-- we have to fake it using the label facility.  This doesn't let us
+-- specify that the count should appear at bottom right, so we use some
+-- dodgy whitespace to shift it away from the centre of the button.
+-- Unfortunately the correct amount of whitespace depends on display
+-- resolution, so the results from this will be variable.  This should be
+-- replaced as soon as the engine adds support for a proper item count,
+-- or at least label placement control, on buttons.
+--
+-- The specified item may be a group.  In that case, an image_button[]
+-- is used, displaying an image that just indicates grouping, with a
+-- label giving the name of the specific group.  It very often happens
+-- that the group name doesn't fit within the confines of the button and
+-- gets cropped.  Group names are also not brilliantly readable against
+-- the background of the group image.
+local function stack_image_button(x, y, w, h, buttonname_prefix, stackstring)
+	local st = ItemStack(stackstring)
+	local n = st:get_name()
+	local c = st:get_count()
+	local clab = c == 1 and "" or string.format("%9d", c)
+	local buttonname = buttonname_prefix..n
+	local xywh = x..","..y..";"..w..","..h
+	if string.sub(n, 1, 6) == "group:" then
+		return "image_button["..xywh..";".."ui_group.png;"..minetest.formspec_escape(buttonname)..";"..minetest.formspec_escape(string.sub(n, 7)).."\n\n"..clab.."]"
+	else
+		return "item_image_button["..xywh..";"..minetest.formspec_escape(n)..";"..minetest.formspec_escape(buttonname_prefix..n)..";\n\n"..clab.."]"
+	end
+end
+
 unified_inventory.register_page("craftguide", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
@@ -188,20 +221,7 @@ unified_inventory.register_page("craftguide", {
 		for x = 1, width do
 			local item = craft.items[i]
 			if item then
-				if string.sub(item, 1, 6) == "group:" then
-					local group = string.sub(item, 7)
-					formspec = formspec.."image_button["
-						..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;"
-						.."ui_group.png;"
-						.."item_group_"..minetest.formspec_escape(group)..";"
-						..minetest.formspec_escape(group).."]"
-				else
-					formspec = formspec.."item_image_button["
-						..(1.0 + x)..","..(0.0 + y)..";1.1,1.1;"
-						..minetest.formspec_escape(item)..";"
-						.."item_button_"
-						..minetest.formspec_escape(item)..";]"
-				end
+				formspec = formspec..stack_image_button(1.0+x, 0.0+y, 1.1, 1.1, "item_button_", item)
 			end
 			i = i + 1
 		end
