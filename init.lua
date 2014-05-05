@@ -38,8 +38,10 @@ if creative_inventory then
 	end
 end
 
+dofile(modpath.."/datastorage.lua")
 dofile(modpath.."/api.lua")
 dofile(modpath.."/internal.lua")
 dofile(modpath.."/callbacks.lua")
 dofile(modpath.."/register.lua")
 dofile(modpath.."/bags.lua")
+dofile(modpath.."/waypoints.lua")
