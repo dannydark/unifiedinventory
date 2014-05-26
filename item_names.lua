@@ -1,3 +1,5 @@
+-- code based on 4itemnames mod by 4aiman
+
 local wield = {}
 local huds = {}
 local dtimes = {}
@@ -27,7 +29,7 @@ minetest.register_on_joinplayer(function(player)
 		number = 0xFFFFFF ,
 		text = "",
 	})
-	print(dump("item hud id: "..huds[player_name]))
+	--print(dump("item hud id: "..huds[player_name]))
 	end)
 end)
 

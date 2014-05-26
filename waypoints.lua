@@ -96,8 +96,10 @@ unified_inventory.update_hud = function (player, waypoint)
 	else
 		name = waypoint.name
 	end
-	if waypoint.active then
+	if waypoint.hud then
 		player:hud_remove(waypoint.hud)
+	end
+	if waypoint.active then
 		waypoint.hud = player:hud_add({
 			hud_elem_type = "waypoint",
 			number = unified_inventory.hud_colors[waypoint.color][2] ,
@@ -106,10 +108,7 @@ unified_inventory.update_hud = function (player, waypoint)
 			world_pos = waypoint.world_pos
 		})
 	else 
-		if waypoint.hud ~= nil then 
-			player:hud_remove(waypoint.hud)
-			waypoint.hud = nil
-		end
+		waypoint.hud = nil
 	end
 end
 
