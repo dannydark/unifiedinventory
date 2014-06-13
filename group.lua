@@ -21,13 +21,23 @@ end
 -- those items we prefer the one registered for the group by a mod.
 -- Among equally-preferred items, we just pick the one with the
 -- lexicographically earliest name.
+--
+-- The parameter to this function isn't just a single group name.
+-- It may be a comma-separated list of group names.  This is really a
+-- "group:..." ingredient specification, minus the "group:" prefix.
 
-local function compute_group_item(group_name)
+local function compute_group_item(group_name_list)
+	local group_names = group_name_list:split(",")
 	local candidate_items = {}
 	for itemname, itemdef in pairs(minetest.registered_items) do
-		if (itemdef.groups.not_in_creative_inventory or 0) == 0 and
-				(itemdef.groups[group_name] or 0) ~= 0 then
-			table.insert(candidate_items, itemname)
+		if (itemdef.groups.not_in_creative_inventory or 0) == 0 then
+			local all = true
+			for _, group_name in ipairs(group_names) do
+				if (itemdef.groups[group_name] or 0) == 0 then
+					all = false
+				end
+			end
+			if all then table.insert(candidate_items, itemname) end
 		end
 	end
 	local num_candidates = #candidate_items
@@ -36,15 +46,22 @@ local function compute_group_item(group_name)
 	elseif num_candidates == 1 then
 		return {item = candidate_items[1], sole = true}
 	end
+	local is_group = {}
+	local registered_rep = {}
+	for _, group_name in ipairs(group_names) do
+		is_group[group_name] = true
+		local rep = unified_inventory.registered_group_items[group_name]
+		if rep then registered_rep[rep] = true end
+	end
 	local bestitem = ""
 	local bestpref = 0
 	for _, item in ipairs(candidate_items) do
 		local pref
-		if item == unified_inventory.registered_group_items[group_name] then
+		if registered_rep[item] then
 			pref = 4
-		elseif item == "default:"..group_name then
+		elseif string.sub(item, 1, 8) == "default:" and is_group[string.sub(item, 9)] then
 			pref = 3
-		elseif item:gsub("^[^:]*:", "") == group_name then
+		elseif is_group[item:gsub("^[^:]*:", "")] then
 			pref = 2
 		else
 			pref = 1

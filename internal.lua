@@ -1,3 +1,17 @@
+-- This pair of encoding functions is used where variable text must go in
+-- button names, where the text might contain formspec metacharacters.
+-- We can escape button names for the formspec, to avoid screwing up
+-- form structure overall, but they then don't get de-escaped, and so
+-- the input we get back from the button contains the formspec escaping.
+-- This is a game engine bug, and in the anticipation that it might be
+-- fixed some day we don't want to rely on it.  So for safety we apply
+-- an encoding that avoids all formspec metacharacters.
+function unified_inventory.mangle_for_formspec(str)
+	return string.gsub(str, "([^A-Za-z0-9])", function (c) return string.format("_%d_", string.byte(c)) end)
+end
+function unified_inventory.demangle_for_formspec(str)
+	return string.gsub(str, "_([0-9]+)_", function (v) return string.char(v) end)
+end
 
 function unified_inventory.get_formspec(player, page)
 	if not player then
@@ -71,7 +85,7 @@ function unified_inventory.get_formspec(player, page)
 						..(8.2 + x * 0.7)..","
 						..(1   + y * 0.7)..";.81,.81;"
 						..name..";item_button_"
-						..name..";]"
+						..unified_inventory.mangle_for_formspec(name)..";]"
 				list_index = list_index + 1
 			end
 		end

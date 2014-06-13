@@ -165,7 +165,7 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 	return string.format("item_image_button[%u,%u;%u,%u;%s;%s;%s]",
 			x, y, w, h,
 			minetest.formspec_escape(displayitem),
-			minetest.formspec_escape(buttonname_prefix..selectitem),
+			minetest.formspec_escape(buttonname_prefix..unified_inventory.mangle_for_formspec(selectitem)),
 			label)
 end
 
