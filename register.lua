@@ -207,24 +207,18 @@ unified_inventory.register_page("craftguide", {
 			formspec = formspec.."label[6,3.35;No recipes]"
 		end
 
-		local width = craft and craft.width or 0
-		if width == 0 then
-			-- Shapeless recipe
-			width = craft_type.width
-		end
+		local display_size = craft_type.dynamic_display_size and craft_type.dynamic_display_size(craft) or { width = craft_type.width, height = craft_type.height }
+		local craft_width = craft_type.get_shaped_craft_width and craft_type.get_shaped_craft_width(craft) or display_size.width
 
-		local height = craft_type.height
-		if craft then
-			height = math.ceil(table.maxn(craft.items) / width)
-		end
-
-		local i = 1
 		-- This keeps recipes aligned to the right,
 		-- so that they're close to the arrow.
-		local xoffset = 1 + (3 - width)
-		for y = 1, height do
-		for x = 1, width do
-			local item = craft and craft.items[i]
+		local xoffset = 1 + (3 - display_size.width)
+		for y = 1, display_size.height do
+		for x = 1, display_size.width do
+			local item
+			if craft and x <= craft_width then
+				item = craft.items[(y-1) * craft_width + x]
+			end
 			if item then
 				formspec = formspec..stack_image_button(
 						xoffset + x, y, 1.1, 1.1,
@@ -235,7 +229,6 @@ unified_inventory.register_page("craftguide", {
 					..tostring(xoffset + x)..","..tostring(y)
 					..";1,1;ui_blank_image.png;;]"
 			end
-			i = i + 1
 		end
 		end
 

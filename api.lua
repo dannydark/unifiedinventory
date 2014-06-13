@@ -134,6 +134,13 @@ unified_inventory.register_craft_type("normal", {
 	description = "Crafting",
 	width = 3,
 	height = 3,
+	get_shaped_craft_width = function (craft) return craft.width end,
+	dynamic_display_size = function (craft)
+		local w = craft.width
+		local h = math.ceil(table.maxn(craft.items) / craft.width)
+		local g = w < h and h or w
+		return { width = g, height = g }
+	end,
 	uses_crafting_grid = true,
 })
 
@@ -142,6 +149,12 @@ unified_inventory.register_craft_type("shapeless", {
 	description = "Mixing",
 	width = 3,
 	height = 3,
+	dynamic_display_size = function (craft)
+		local maxn = table.maxn(craft.items)
+		local g = 1
+		while g*g < maxn do g = g + 1 end
+		return { width = g, height = g }
+	end,
 	uses_crafting_grid = true,
 })
 
