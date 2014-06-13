@@ -1,6 +1,7 @@
 
 unified_inventory.registered_group_items = {
 	mesecon_conductor_craftable = "mesecons:wire_00000000_off",
+	stone = "default:cobble",
 	wool = "wool:white",
 }
 
@@ -21,7 +22,7 @@ end
 -- Among equally-preferred items, we just pick the one with the
 -- lexicographically earliest name.
 
-function compute_group_item(group_name)
+local function compute_group_item(group_name)
 	local candidate_items = {}
 	for itemname, itemdef in pairs(minetest.registered_items) do
 		if (itemdef.groups.not_in_creative_inventory or 0) == 0 and
@@ -40,8 +41,10 @@ function compute_group_item(group_name)
 	for _, item in ipairs(candidate_items) do
 		local pref
 		if item == unified_inventory.registered_group_items[group_name] then
+			pref = 4
+		elseif item == "default:"..group_name then
 			pref = 3
-		elseif item:gsub("^[^:]+:", "") == group_name then
+		elseif item:gsub("^[^:]*:", "") == group_name then
 			pref = 2
 		else
 			pref = 1

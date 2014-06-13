@@ -156,17 +156,17 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 	if name:sub(1, 6) == "group:" then
 		local group_name = name:sub(7)
 		local group_item = unified_inventory.get_group_item(group_name)
-		show_group = not group_item.sole
+		show_is_group = not group_item.sole
 		displayitem = group_item.item or "unknown"
 		selectitem = group_item.sole and displayitem or name
 	end
-	-- Hackily shift the count to the bottom right
-	local shiftstr = "\n\n        "
+	local label = string.format("\n\n%s%7d", show_is_group and "G" or "  ", count):gsub(" 1$", " .")
+	if label == "\n\n        ." then label = "" end
 	return string.format("item_image_button[%u,%u;%u,%u;%s;%s;%s]",
 			x, y, w, h,
 			minetest.formspec_escape(displayitem),
 			minetest.formspec_escape(buttonname_prefix..selectitem),
-			count ~= 1 and shiftstr..tostring(count) or "")
+			label)
 end
 
 unified_inventory.register_page("craftguide", {
