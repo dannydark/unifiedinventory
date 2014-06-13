@@ -97,10 +97,6 @@ end
 function unified_inventory.apply_filter(player, filter)
 	local player_name = player:get_player_name()
 	local lfilter = string.lower(filter)
-	if not pcall(function() ("technic:test"):find(lfilter) end) then
-		-- Filter is invalid
-		lfilter = ""
-	end
 	local ffilter
 	if lfilter:sub(1, 6) == "group:" then
 		local groups = lfilter:sub(7):split(",")
@@ -116,7 +112,7 @@ function unified_inventory.apply_filter(player, filter)
 		ffilter = function(name, def)
 			local lname = string.lower(name)
 			local ldesc = string.lower(def.description)
-			return string.find(lname, lfilter) or string.find(ldesc, lfilter)
+			return string.find(lname, lfilter, 1, true) or string.find(ldesc, lfilter, 1, true)
 		end
 	end
 	unified_inventory.filtered_items_list[player_name]={}
