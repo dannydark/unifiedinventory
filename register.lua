@@ -174,17 +174,18 @@ unified_inventory.register_page("craftguide", {
 		local player_name = player:get_player_name()
 		local formspec = ""
 		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
-		formspec = formspec.."background[0,1;8,3;ui_craftguide_form.png]"
 		formspec = formspec.."label[0,0;Crafting Guide]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
+		local item_name = unified_inventory.current_item[player_name]
+		if not item_name then return {formspec=formspec} end
+
+		formspec = formspec.."background[0,1;8,3;ui_craftguide_form.png]"
+		formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
+		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
 		local craftinv = minetest.get_inventory({
 			type = "detached",
 			name = player_name.."craftrecipe"
 		})
-		local item_name = unified_inventory.current_item[player_name] or ""
-
-		formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
-		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
 
 		local alternate, alternates, craft, craft_type
 		alternate = unified_inventory.alternate[player_name]
@@ -194,19 +195,20 @@ unified_inventory.register_page("craftguide", {
 			craft = crafts[alternate]
 		end
 
-		if craft then
-			craftinv:set_stack("output", 1, craft.output)
-			craft_type = unified_inventory.registered_craft_types[craft.type] or
-					unified_inventory.craft_type_defaults(craft.type, {})
-			formspec = formspec.."label[6,3.35;Method:]"
-			formspec = formspec.."label[6,3.75;"
-					..minetest.formspec_escape(craft_type.description).."]"
-		else
+		if not craft then
 			craftinv:set_stack("output", 1, item_name)
 			craft_type = unified_inventory.craft_type_defaults("", {})
 			formspec = formspec.."label[6,3.35;No recipes]"
+			formspec = formspec.."image[4,1;1.1,1.1;ui_no.png]"
+			return {formspec = formspec}
 		end
 
+		craftinv:set_stack("output", 1, craft.output)
+		craft_type = unified_inventory.registered_craft_types[craft.type] or
+				unified_inventory.craft_type_defaults(craft.type, {})
+		formspec = formspec.."label[6,3.35;Method:]"
+		formspec = formspec.."label[6,3.75;"
+				..minetest.formspec_escape(craft_type.description).."]"
 		local display_size = craft_type.dynamic_display_size and craft_type.dynamic_display_size(craft) or { width = craft_type.width, height = craft_type.height }
 		local craft_width = craft_type.get_shaped_craft_width and craft_type.get_shaped_craft_width(craft) or display_size.width
 
