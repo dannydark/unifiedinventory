@@ -1,3 +1,25 @@
+function unified_inventory.canonical_item_spec_matcher(spec)
+	local specname = ItemStack(spec):get_name()
+	if specname:sub(1, 6) == "group:" then
+		local group_names = specname:sub(7):split(",")
+		return function (itemname)
+			local itemdef = minetest.registered_items[itemname]
+			for _, group_name in ipairs(group_names) do
+				if (itemdef.groups[group_name] or 0) == 0 then
+					return false
+				end
+			end
+			return true
+		end
+	else
+		return function (itemname) return itemname == specname end
+	end
+end
+
+function unified_inventory.item_matches_spec(item, spec)
+	local itemname = ItemStack(item):get_name()
+	return unified_inventory.canonical_item_spec_matcher(spec)(itemname)
+end
 
 unified_inventory.registered_group_items = {
 	mesecon_conductor_craftable = "mesecons:wire_00000000_off",

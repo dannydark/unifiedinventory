@@ -169,6 +169,23 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 			label)
 end
 
+local recipe_text = {
+	recipe = "Recipe",
+	usage = "Usage",
+}
+local no_recipe_text = {
+	recipe = "No recipes",
+	usage = "No usages",
+}
+local role_text = {
+	recipe = "Result",
+	usage = "Ingredient",
+}
+local other_dir = {
+	recipe = "usage",
+	usage = "recipe",
+}
+
 unified_inventory.register_page("craftguide", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
@@ -179,36 +196,33 @@ unified_inventory.register_page("craftguide", {
 		local item_name = unified_inventory.current_item[player_name]
 		if not item_name then return {formspec=formspec} end
 
-		formspec = formspec.."background[0,1;8,3;ui_craftguide_form.png]"
-		formspec = formspec.."textarea[0.3,0.6;10,1;;Result: "..minetest.formspec_escape(item_name)..";]"
-		formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."craftrecipe;output;6,1;1,1;]"
-		local craftinv = minetest.get_inventory({
-			type = "detached",
-			name = player_name.."craftrecipe"
-		})
-
-		local alternate, alternates, craft, craft_type
-		alternate = unified_inventory.alternate[player_name]
-		local crafts = unified_inventory.crafts_table[item_name]
+		local dir = unified_inventory.current_craft_direction[player_name]
+		local crafts = unified_inventory.crafts_for[dir][item_name]
+		local alternate = unified_inventory.alternate[player_name]
+		local alternates, craft
 		if crafts ~= nil and #crafts > 0 then
 			alternates = #crafts
 			craft = crafts[alternate]
 		end
 
+		formspec = formspec.."background[0,1;8,3;ui_craftguide_form.png]"
+		formspec = formspec.."textarea[0.3,0.6;10,1;;"..minetest.formspec_escape(role_text[dir]..": "..item_name)..";]"
+
 		if not craft then
-			craftinv:set_stack("output", 1, item_name)
-			craft_type = unified_inventory.craft_type_defaults("", {})
-			formspec = formspec.."label[6,3.35;No recipes]"
-			formspec = formspec.."image[4,1;1.1,1.1;ui_no.png]"
+			formspec = formspec.."label[6,3.35;"..minetest.formspec_escape(no_recipe_text[dir]).."]"
+			local no_pos = dir == "recipe" and 4 or 6
+			local item_pos = dir == "recipe" and 6 or 4
+			formspec = formspec.."image["..no_pos..",1;1.1,1.1;ui_no.png]"
+			formspec = formspec..stack_image_button(item_pos, 1, 1.1, 1.1, "item_button_"..other_dir[dir].."_", ItemStack(item_name))
 			return {formspec = formspec}
 		end
 
-		craftinv:set_stack("output", 1, craft.output)
-		craft_type = unified_inventory.registered_craft_types[craft.type] or
+		local craft_type = unified_inventory.registered_craft_types[craft.type] or
 				unified_inventory.craft_type_defaults(craft.type, {})
 		formspec = formspec.."label[6,3.35;Method:]"
 		formspec = formspec.."label[6,3.75;"
 				..minetest.formspec_escape(craft_type.description).."]"
+		formspec = formspec..stack_image_button(6, 1, 1.1, 1.1, "item_button_usage_", ItemStack(craft.output))
 		local display_size = craft_type.dynamic_display_size and craft_type.dynamic_display_size(craft) or { width = craft_type.width, height = craft_type.height }
 		local craft_width = craft_type.get_shaped_craft_width and craft_type.get_shaped_craft_width(craft) or display_size.width
 
@@ -224,7 +238,8 @@ unified_inventory.register_page("craftguide", {
 			if item then
 				formspec = formspec..stack_image_button(
 						xoffset + x, y, 1.1, 1.1,
-						"item_button_", ItemStack(item))
+						"item_button_recipe_",
+						ItemStack(item))
 			else
 				-- Fake buttons just to make grid
 				formspec = formspec.."image_button["
@@ -242,7 +257,7 @@ unified_inventory.register_page("craftguide", {
 		end
 
 		if alternates and alternates > 1 then
-			formspec = formspec.."label[0,2.6;Recipe "
+			formspec = formspec.."label[0,2.6;"..recipe_text[dir].." "
 					..tostring(alternate).." of "
 					..tostring(alternates).."]"
 					.."button[0,3.15;2,1;alternate;Alternate]"
@@ -259,17 +274,13 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 	if not amount then return end
 	local player_name = player:get_player_name()
-	local recipe_inv = minetest.get_inventory({
-		type="detached",
-		name=player_name.."craftrecipe",
-	})
 
 	local output = unified_inventory.current_item[player_name]
 	if (not output) or (output == "") then return end
 
 	local player_inv = player:get_inventory()
 
-	local crafts = unified_inventory.crafts_table[output]
+	local crafts = unified_inventory.crafts_for[unified_inventory.current_craft_direction[player_name]][output]
 	if (not crafts) or (#crafts == 0) then return end
 
 	local alternate = unified_inventory.alternate[player_name]

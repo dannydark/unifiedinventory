@@ -14,27 +14,14 @@ minetest.register_on_joinplayer(function(player)
 	unified_inventory.filtered_items_list[player_name] =
 			unified_inventory.items_list
 	unified_inventory.activefilter[player_name] = ""
-	unified_inventory.apply_filter(player, "")
+	unified_inventory.active_search_direction[player_name] = "nochange"
+	unified_inventory.apply_filter(player, "", "nochange")
 	unified_inventory.current_searchbox[player_name] = ""
 	unified_inventory.alternate[player_name] = 1
 	unified_inventory.current_item[player_name] = nil
+	unified_inventory.current_craft_direction[player_name] = "recipe"
 	unified_inventory.set_inventory_formspec(player,
 			unified_inventory.default)
-
-	-- Crafting guide inventories
-	local inv = minetest.create_detached_inventory(player_name.."craftrecipe", {
-		allow_put = function(inv, listname, index, stack, player)
-			return 0
-		end,
-		allow_take = function(inv, listname, index, stack, player)
-			return 0
-		end,
-		allow_move = function(inv, from_list, from_index, to_list,
-				to_index, count, player)
-			return 0
-		end,
-	})
-	inv:set_size("output", 1)
 
 	-- Refill slot
 	local refill = minetest.create_detached_inventory(player_name.."refill", {
@@ -122,11 +109,15 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	local clicked_item = nil
 	for name, value in pairs(fields) do
 		if string.sub(name, 1, 12) == "item_button_" then
-			clicked_item = unified_inventory.demangle_for_formspec(string.sub(name, 13))
+			local new_dir, mangled_item = string.match(name, "^item_button_([a-z]+)_(.*)$")
+			clicked_item = unified_inventory.demangle_for_formspec(mangled_item)
 			if string.sub(clicked_item, 1, 6) == "group:" then
 				minetest.sound_play("click", {to_player=player_name, gain = 0.1})
-				unified_inventory.apply_filter(player, clicked_item)
+				unified_inventory.apply_filter(player, clicked_item, new_dir)
 				return
+			end
+			if new_dir == "recipe" or new_dir == "usage" then
+				unified_inventory.current_craft_direction[player_name] = new_dir
 			end
 			break
 		end
@@ -156,7 +147,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	end
 
 	if fields.searchbutton then
-		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name])
+		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name], "nochange")
 		unified_inventory.current_searchbox[player_name] = ""
 		unified_inventory.set_inventory_formspec(player,
 				unified_inventory.current_page[player_name])
@@ -172,7 +163,7 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 		if item_name then
 			local alternates = 0
 			local alternate = unified_inventory.alternate[player_name]
-			local crafts = unified_inventory.crafts_table[item_name]
+			local crafts = unified_inventory.crafts_for[unified_inventory.current_craft_direction[player_name]][item_name]
 			if crafts ~= nil then
 				alternates = #crafts
 			end

@@ -71,6 +71,7 @@ function unified_inventory.get_formspec(player, page)
 	if #unified_inventory.filtered_items_list[player_name] == 0 then
 		formspec = formspec.."label[8.2,0;No matching items]"
 	else
+		local dir = unified_inventory.active_search_direction[player_name]
 		local list_index = unified_inventory.current_index[player_name]
 		local page = math.floor(list_index / (80) + 1)
 		local pagemax = math.floor(
@@ -84,7 +85,7 @@ function unified_inventory.get_formspec(player, page)
 				formspec = formspec.."item_image_button["
 						..(8.2 + x * 0.7)..","
 						..(1   + y * 0.7)..";.81,.81;"
-						..name..";item_button_"
+						..name..";item_button_"..dir.."_"
 						..unified_inventory.mangle_for_formspec(name)..";]"
 				list_index = list_index + 1
 			end
@@ -108,7 +109,7 @@ function unified_inventory.set_inventory_formspec(player, page)
 end
 
 --apply filter to the inventory list (create filtered copy of full one)
-function unified_inventory.apply_filter(player, filter)
+function unified_inventory.apply_filter(player, filter, search_dir)
 	local player_name = player:get_player_name()
 	local lfilter = string.lower(filter)
 	local ffilter
@@ -139,6 +140,7 @@ function unified_inventory.apply_filter(player, filter)
 	unified_inventory.filtered_items_list_size[player_name] = #unified_inventory.filtered_items_list[player_name]
 	unified_inventory.current_index[player_name] = 1
 	unified_inventory.activefilter[player_name] = filter
+	unified_inventory.active_search_direction[player_name] = search_dir
 	unified_inventory.set_inventory_formspec(player,
 			unified_inventory.current_page[player_name])
 end

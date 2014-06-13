@@ -6,14 +6,15 @@ local worldpath = minetest.get_worldpath()
 -- Data tables definitions
 unified_inventory = {}
 unified_inventory.activefilter = {}
+unified_inventory.active_search_direction = {}
 unified_inventory.alternate = {}
 unified_inventory.current_page = {}
 unified_inventory.current_searchbox = {}
 unified_inventory.current_index = {}
 unified_inventory.current_item = {}
+unified_inventory.current_craft_direction = {}
 unified_inventory.registered_craft_types = {}
-unified_inventory.crafts_table = {}
-unified_inventory.crafts_table_count = 0
+unified_inventory.crafts_for = { usage = {}, recipe = {} }
 unified_inventory.players = {}
 unified_inventory.items_list_size = 0
 unified_inventory.items_list = {}
