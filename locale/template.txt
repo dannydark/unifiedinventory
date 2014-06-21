@@ -12,9 +12,17 @@ Medium Bag =
 Large Bag = 
 
 ### inernal.lua ###
-Page: = 
+First page =
+Back three pages = 
+Back one page = 
+Forward one page = 
+Forward three pages = 
+Last page = 
+No matching items = 
+Page = 
 %s of %s = 
-Filter: = 
+Filter = 
+Search = 
 
 ### register.lua ###
 Can use the creative inventory = 
@@ -22,7 +30,7 @@ Home position set to: %s =
 Time of day set to 6am = 
 You don't have the settime priviledge! = 
 Time of day set to 9pm = 
-This button has been disabled outside of creative mode to prevent accidental inventory trashing. Use the trash slot instead. = 
+This button has been disabled outside of creative mode to prevent accidental inventory trashing.\nUse the trash slot instead. = 
 Inventory Cleared! = 
 Crafting = 
 Trash: = 
@@ -38,6 +46,7 @@ Copy to craft grid: =
 All = 
 Recipe %s of %s = 
 Alternate = 
+Crafting Grid =  
 
 ### waypoints.lua ###
 White = 
@@ -51,4 +60,13 @@ Waypoint inactive =
 World position = 
 Name = 
 HUD text color = 
-Toggle waypoint = 
+Edit waypoint name = 
+Rename waypoint = 
+Change color of waypoint display = 
+Set waypoint to current location = 
+Make waypoint visible = 
+Make waypoint invisible = 
+Disable display of waypoint coordinates = 
+Enable display of waypoint coordinates = 
+Finish editing = 
+Select Waypoint #%d = 

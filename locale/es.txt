@@ -12,9 +12,17 @@ Medium Bag = Bolsa Mediana
 Large Bag = Bolsa Grande
 
 ### inernal.lua ###
-Page: = Página:
+First page =
+Back three pages = 
+Back one page = 
+Forward one page = 
+Forward three pages = 
+Last page = 
+No matching items = 
+Page = Página
 %s of %s = %s de %s
-Filter: = Filtro:
+Filter = Filtro
+Search = 
 
 ### register.lua ###
 Can use the creative inventory = Puede usar el inventario creativo
@@ -22,7 +30,7 @@ Home position set to: %s = Posición de hogar cambiada a: %s
 Time of day set to 6am = Hora del día cambiada a 6AM
 You don't have the settime priviledge! = ¡No tienes el privilegio `settime'!
 Time of day set to 9pm = Hora del día cambiada a 9PM
-This button has been disabled outside of creative mode to prevent accidental inventory trashing. Use the trash slot instead. = Éste botón ha sido deshabilitado para prevenir la destrucción accidental del inventario. Usa la ranura para basura en su lugar.
+This button has been disabled outside of creative mode to prevent accidental inventory trashing. Use the trash slot instead. = Éste botón ha sido deshabilitado para prevenir la destrucción accidental del inventario.\nUsa la ranura para basura en su lugar.
 Inventory Cleared! = ¡Inventario limpio!
 Crafting = Elaboración
 Trash: = Basura:
@@ -38,6 +46,7 @@ Copy to craft grid: = Copiar al cuadro de elaboración
 All = Todos
 Recipe %s of %s = Receta %s de %s
 Alternate = Alternar
+Crafting Grid =  
 
 ### waypoints.lua ###
 White = Blanco
@@ -51,4 +60,13 @@ Waypoint inactive = Punto de paso inactivo
 World position = Posición en el mundo
 Name = Nombre
 HUD text color = Color del HUD
-Toggle waypoint = (Des)Activar punto
+Edit waypoint name = 
+Rename waypoint = 
+Change color of waypoint display = 
+Set waypoint to current location = 
+Make waypoint visible = 
+Make waypoint invisible = 
+Disable display of waypoint coordinates = 
+Enable display of waypoint coordinates = 
+Finish editing = 
+Select Waypoint #%d = 
