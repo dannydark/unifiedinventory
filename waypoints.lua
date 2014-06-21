@@ -1,9 +1,16 @@
+local S
+if intllib then
+	S = intllib.Getter()
+else
+	S = function(s) return s end
+end
+
 unified_inventory.hud_colors = {
-			{"#FFFFFF", 0xFFFFFF, "White"},
-			{"#DBBB00", 0xf1d32c, "Yellow"},
-			{"#DD0000", 0xDD0000, "Red"},
-			{"#2cf136", 0x2cf136, "Green"},
-			{"#2c4df1", 0x2c4df1, "Blue"},		
+			{"#FFFFFF", 0xFFFFFF, S("White")},
+			{"#DBBB00", 0xf1d32c, S("Yellow")},
+			{"#DD0000", 0xDD0000, S("Red")},
+			{"#2cf136", 0x2cf136, S("Green")},
+			{"#2c4df1", 0x2c4df1, S("Blue")},		
 			}
 unified_inventory.hud_colors_max = #unified_inventory.hud_colors
 			
@@ -12,7 +19,7 @@ unified_inventory.register_page("waypoints", {
 		local waypoints = datastorage.get_container (player, "waypoints")
 		local formspec = "background[0,4.5;8,4;ui_main_inventory.png]"..
 			"image[0,0;1,1;ui_waypoints_icon.png]"..
-			"label[1,0;Waypoints]" 
+			"label[1,0;"..S("Waypoints").."]" 
 
 		-- Tabs buttons:
 		local i
@@ -36,10 +43,10 @@ unified_inventory.register_page("waypoints", {
 
 		if waypoints[i].active then  
 			formspec = formspec ..
-				"image_button[5.2,3.7;.8,.8;ui_on_icon.png;toggle_waypoint".. i .. ";]"
+				"image_button[5.2,3.7;.8,.8;ui_on_icon.png;toggle_waypoint".. i .. ";;;;;"..S("Toggle waypoint").."]"
 		else 
 			formspec = formspec ..
-				"image_button[5.2,3.7;.8,.8;ui_off_icon.png;toggle_waypoint".. i .. ";]"
+				"image_button[5.2,3.7;.8,.8;ui_off_icon.png;toggle_waypoint".. i .. ";;;;;"..S("Toggle waypoint").."]"
 		end	
 
 		if waypoints[i].display_pos then
@@ -56,9 +63,9 @@ unified_inventory.register_page("waypoints", {
 		
 		-- Waypoint's info:	
 		if waypoints[i].active then
-			formspec = formspec .. 	"label[1,0.8;Waypoint active]"
+			formspec = formspec .. 	"label[1,0.8;"..S("Waypoint active").."]"
 		else 
-			formspec = formspec .. 	"label[1,0.8;Waypoint inactive]"
+			formspec = formspec .. 	"label[1,0.8;"..S("Waypoint inactive").."]"
 		end
 
 		if waypoints[i].edit then
@@ -67,10 +74,10 @@ unified_inventory.register_page("waypoints", {
 				"image_button[7.3,2.9;.8,.8;ui_ok_icon.png;confirm_rename".. i .. ";]"
 		end
 		
-		formspec = formspec .. "label[1,1.3;World position: " .. 
+		formspec = formspec .. "label[1,1.3;"..S("World position")..": " .. 
 			minetest.pos_to_string(waypoints[i].world_pos) .. "]" ..
-			"label[1,1.8;Name: ".. waypoints[i].name .. "]" ..
-			"label[1,2.3;Hud text color: " ..
+			"label[1,1.8;"..S("Name")..": ".. waypoints[i].name .. "]" ..
+			"label[1,2.3;"..S("HUD text color")..": " ..
 			unified_inventory.hud_colors[waypoints[i].color][3] .. "]"
 			
 		return {formspec=formspec}

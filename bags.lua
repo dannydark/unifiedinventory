@@ -3,11 +3,18 @@
 -- Copyright (c) 2012 cornernote, Brett O'Donnell <cornernote@gmail.com>
 -- License: GPLv3
 
+local S
+if intllib then
+	S = intllib.Getter()
+else
+	S = function(s) return s end
+end
+
 unified_inventory.register_page("bags", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
 		local formspec = "background[0.06,0.99;7.92,7.52;ui_bags_main_form.png]"
-		formspec = formspec.."label[0,0;Bags]"
+		formspec = formspec.."label[0,0;"..S("Bags").."]"
 		formspec = formspec.."button[0,2;2,0.5;bag1;Bag 1]"
 		formspec = formspec.."button[2,2;2,0.5;bag2;Bag 2]"
 		formspec = formspec.."button[4,2;2,0.5;bag3;Bag 3]"
@@ -24,6 +31,7 @@ unified_inventory.register_page("bags", {
 unified_inventory.register_button("bags", {
 	type = "image",
 	image = "ui_bags_icon.png",
+	tooltip = S("Bags")
 })
 
 for i = 1, 4 do
@@ -103,19 +111,19 @@ end)
 
 -- register bag tools
 minetest.register_tool("unified_inventory:bag_small", {
-	description = "Small Bag",
+	description = S("Small Bag"),
 	inventory_image = "bags_small.png",
 	groups = {bagslots=8},
 })
 
 minetest.register_tool("unified_inventory:bag_medium", {
-	description = "Medium Bag",
+	description = S("Medium Bag"),
 	inventory_image = "bags_medium.png",
 	groups = {bagslots=16},
 })
 
 minetest.register_tool("unified_inventory:bag_large", {
-	description = "Large Bag",
+	description = S("Large Bag"),
 	inventory_image = "bags_large.png",
 	groups = {bagslots=24},
 })

@@ -1,3 +1,10 @@
+local S
+if intllib then
+	S = intllib.Getter()
+else
+	S = function(s) return s end
+end
+
 -- This pair of encoding functions is used where variable text must go in
 -- button names, where the text might contain formspec metacharacters.
 -- We can escape button names for the formspec, to avoid screwing up
@@ -36,11 +43,13 @@ function unified_inventory.get_formspec(player, page)
 
 	-- Main buttons
 	for i, def in pairs(unified_inventory.buttons) do
+		local tooltip = def.tooltip or ""
 		if def.type == "image" then
 			formspec = formspec.."image_button["
 					..(0.65 * (i - 1))..",9;0.8,0.8;"
 					..minetest.formspec_escape(def.image)..";"
-					..minetest.formspec_escape(def.name)..";]"
+					..minetest.formspec_escape(def.name)..";;;;;"
+					..tooltip.."]"
 		end
 	end
 

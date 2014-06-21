@@ -1,3 +1,9 @@
+local S
+if intllib then
+	S = intllib.Getter()
+else
+	S = function(s) return s end
+end
 
 minetest.register_privilege("creative", {
 	description = "Can use the creative inventory",
@@ -23,16 +29,19 @@ trash:set_size("main", 1)
 unified_inventory.register_button("craft", {
 	type = "image",
 	image = "ui_craft_icon.png",
+	tooltip = S("Crafting Menu")
 })
 
 unified_inventory.register_button("craftguide", {
 	type = "image",
 	image = "ui_craftguide_icon.png",
+	tooltip = S("Crafting Guide")
 })
 
 unified_inventory.register_button("home_gui_set", {
 	type = "image",
 	image = "ui_sethome_icon.png",
+	tooltip = S("Set home position"),
 	action = function(player)
 		local player_name = player:get_player_name()
 		unified_inventory.set_home(player, player:getpos())
@@ -50,6 +59,7 @@ unified_inventory.register_button("home_gui_set", {
 unified_inventory.register_button("home_gui_go", {
 	type = "image",
 	image = "ui_gohome_icon.png",
+	tooltip = S("Go home"),
 	action = function(player)
 		minetest.sound_play("teleport",
 				{to_player=player:get_player_name(), gain = 1.0})
@@ -60,6 +70,7 @@ unified_inventory.register_button("home_gui_go", {
 unified_inventory.register_button("misc_set_day", {
 	type = "image",
 	image = "ui_sun_icon.png",
+	tooltip = S("Set time to day"),
 	action = function(player)
 		local player_name = player:get_player_name()
 		if minetest.check_player_privs(player_name, {settime=true}) then
@@ -79,6 +90,7 @@ unified_inventory.register_button("misc_set_day", {
 unified_inventory.register_button("misc_set_night", {
 	type = "image",
 	image = "ui_moon_icon.png",
+	tooltip = S("Set time to night"),
 	action = function(player)
 		local player_name = player:get_player_name()
 		if minetest.check_player_privs(player_name, {settime=true}) then
@@ -98,6 +110,7 @@ unified_inventory.register_button("misc_set_night", {
 unified_inventory.register_button("clear_inv", {
 	type = "image",
 	image = "ui_trash_icon.png",
+	tooltip = S("Clear inventory"),
 	action = function(player)
 		local player_name = player:get_player_name()
 		if not unified_inventory.is_creative(player_name) then
