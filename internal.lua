@@ -48,8 +48,9 @@ function unified_inventory.get_formspec(player, page)
 			formspec = formspec.."image_button["
 					..(0.65 * (i - 1))..",9;0.8,0.8;"
 					..minetest.formspec_escape(def.image)..";"
-					..minetest.formspec_escape(def.name)..";;;;;"
-					..tooltip.."]"
+					..minetest.formspec_escape(def.name)..";]"
+					.."tooltip["..minetest.formspec_escape(def.name)
+					..";"..tooltip.."]"
 		end
 	end
 
@@ -65,30 +66,36 @@ function unified_inventory.get_formspec(player, page)
 
 	-- Controls to flip items pages
 	local start_x = 9.2
-	formspec = formspec .. "image_button[" .. (start_x + 0.6 * 0)
-		.. ",9;.8,.8;ui_skip_backward_icon.png;start_list;;;;;"
-		.. minetest.formspec_escape(S("First page")) .. "]"
-	formspec = formspec .. "image_button[" .. (start_x + 0.6 * 1)
-		.. ",9;.8,.8;ui_doubleleft_icon.png;rewind3;;;;;"
-		.. minetest.formspec_escape(S("Back three pages")) .. "]"
-	formspec = formspec .. "image_button[" .. (start_x + 0.6 * 2)
-		.. ",9;.8,.8;ui_left_icon.png;rewind1;;;;;"
-		.. minetest.formspec_escape(S("Back one page")) .. "]"
-	formspec = formspec .. "image_button[" .. (start_x + 0.6 * 3)
-		.. ",9;.8,.8;ui_right_icon.png;forward1;;;;;"
-		.. minetest.formspec_escape(S("Forward one page")) .. "]"
-	formspec = formspec .. "image_button[" .. (start_x + 0.6 * 4)
-		.. ",9;.8,.8;ui_doubleright_icon.png;forward3;;;;;"
-		.. minetest.formspec_escape(S("Forward three pages")) .. "]"
-	formspec = formspec .. "image_button[" .. (start_x + 0.6 * 5)
-		.. ",9;.8,.8;ui_skip_forward_icon.png;end_list;;;;;"
-		.. minetest.formspec_escape(S("Last page")) .. "]"
+	formspec = formspec 
+		.. "image_button[" .. (start_x + 0.6 * 0)
+			.. ",9;.8,.8;ui_skip_backward_icon.png;start_list;]"
+		.. "tooltip[start_list;" .. minetest.formspec_escape(S("First page")) .. "]"
+
+		.. "image_button[" .. (start_x + 0.6 * 1)
+			.. ",9;.8,.8;ui_doubleleft_icon.png;rewind3;]"
+		.. "tooltip[rewind3;" .. minetest.formspec_escape(S("Back three pages")) .. "]"
+
+		.. "image_button[" .. (start_x + 0.6 * 2)
+			.. ",9;.8,.8;ui_left_icon.png;rewind1;]"
+		.. "tooltip[rewind1;" .. minetest.formspec_escape(S("Back one page")) .. "]"
+
+		.. "image_button[" .. (start_x + 0.6 * 3)
+			.. ",9;.8,.8;ui_right_icon.png;forward1;]"
+		.. "tooltip[forward1;" .. minetest.formspec_escape(S("Forward one page")) .. "]"
+
+		.. "image_button[" .. (start_x + 0.6 * 4)
+			.. ",9;.8,.8;ui_doubleright_icon.png;forward3;]"
+		.. "tooltip[forward3;" .. minetest.formspec_escape(S("Forward three pages")) .. "]"
+
+		.. "image_button[" .. (start_x + 0.6 * 5)
+			.. ",9;.8,.8;ui_skip_forward_icon.png;end_list;]"
+		.. "tooltip[end_list;" .. minetest.formspec_escape(S("Last page")) .. "]"
 
 	-- Search box
 	formspec = formspec .. "field[9.5,8.325;3,1;searchbox;;"
 		.. minetest.formspec_escape(unified_inventory.current_searchbox[player_name]) .. "]"
-	formspec = formspec .. "image_button[12.2,8.1;.8,.8;ui_search_icon.png;searchbutton;;;;;"
-		.. S("Search") .. "]"
+	formspec = formspec .. "image_button[12.2,8.1;.8,.8;ui_search_icon.png;searchbutton;]"
+		.. "tooltip[searchbutton;" ..S("Search") .. "]"
 
 	-- Items list
 	if #unified_inventory.filtered_items_list[player_name] == 0 then
