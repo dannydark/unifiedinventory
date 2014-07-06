@@ -38,7 +38,6 @@ if creative_inventory then
 	end
 end
 
-dofile(modpath.."/datastorage.lua")
 dofile(modpath.."/group.lua")
 dofile(modpath.."/api.lua")
 dofile(modpath.."/internal.lua")
@@ -46,4 +45,7 @@ dofile(modpath.."/callbacks.lua")
 dofile(modpath.."/register.lua")
 dofile(modpath.."/bags.lua")
 dofile(modpath.."/item_names.lua")
-dofile(modpath.."/waypoints.lua")
+if minetest.get_modpath("datastorage") then
+	dofile(modpath.."/waypoints.lua")
+end
+
