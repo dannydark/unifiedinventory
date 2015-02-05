@@ -3,12 +3,7 @@
 -- Copyright (c) 2012 cornernote, Brett O'Donnell <cornernote@gmail.com>
 -- License: GPLv3
 
-local S
-if rawget(_G, "intllib") then
-	S = intllib.Getter()
-else
-	S = function(s) return s end
-end
+local S = unified_inventory.gettext
 
 unified_inventory.register_page("bags", {
 	get_formspec = function(player)

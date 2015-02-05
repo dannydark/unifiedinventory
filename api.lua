@@ -1,9 +1,4 @@
-local S
-if rawget(_G, "intllib") then
-	S = intllib.Getter()
-else
-	S = function(s) return s end
-end
+local S = unified_inventory.gettext
 
 -- Create detached creative inventory after loading all mods
 minetest.after(0.01, function()

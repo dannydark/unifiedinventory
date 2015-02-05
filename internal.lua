@@ -1,9 +1,4 @@
-local S
-if rawget(_G, "intllib") then
-	S = intllib.Getter()
-else
-	S = function(s) return s end
-end
+local S = unified_inventory.gettext
 
 -- This pair of encoding functions is used where variable text must go in
 -- button names, where the text might contain formspec metacharacters.
