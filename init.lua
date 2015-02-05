@@ -32,7 +32,7 @@ unified_inventory.home_filename =
 unified_inventory.default = "craft"
 
 -- Disable default creative inventory
-if creative_inventory then
+if rawget(_G, "creative_inventory") then
 	function creative_inventory.set_creative_formspec(player, start_i, pagenum)
 		return
 	end
