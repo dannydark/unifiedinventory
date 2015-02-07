@@ -224,9 +224,10 @@ unified_inventory.register_page("craftguide", {
 
 		local craft_type = unified_inventory.registered_craft_types[craft.type] or
 				unified_inventory.craft_type_defaults(craft.type, {})
-		formspec = formspec.."label[6,3.35;" .. S("Method:") .. "]"
-		formspec = formspec.."label[6,3.75;"
-				..minetest.formspec_escape(craft_type.description).."]"
+		if craft_type.icon then
+			formspec = formspec..string.format(" image[%f,%f;%f,%f;%s]",5.2,0.85,0.5,0.5,craft_type.icon)
+		end
+		formspec = formspec.."label[5,1.50;" .. minetest.formspec_escape(craft_type.description).."]"
 		formspec = formspec..stack_image_button(6, 1, 1.1, 1.1, "item_button_usage_", ItemStack(craft.output))
 		local display_size = craft_type.dynamic_display_size and craft_type.dynamic_display_size(craft) or { width = craft_type.width, height = craft_type.height }
 		local craft_width = craft_type.get_shaped_craft_width and craft_type.get_shaped_craft_width(craft) or display_size.width
