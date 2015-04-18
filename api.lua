@@ -68,43 +68,36 @@ end)
 -- load_home
 local function load_home()
 	local input = io.open(unified_inventory.home_filename, "r")
-	if input then
-		while true do
-			local x = input:read("*n")
-			if x == nil then
-				break
-			end
-			local y = input:read("*n")
-			local z = input:read("*n")
-			local name = input:read("*l")
-			unified_inventory.home_pos[name:sub(2)] = {x = x, y = y, z = z}
-		end
-		io.close(input)
-	else
+	if not input then
 		unified_inventory.home_pos = {}
+		return
 	end
+	while true do
+		local x = input:read("*n")
+		if not x then break end
+		local y = input:read("*n")
+		local z = input:read("*n")
+		local name = input:read("*l")
+		unified_inventory.home_pos[name:sub(2)] = {x = x, y = y, z = z}
+	end
+	io.close(input)
 end
 load_home()
 
 function unified_inventory.set_home(player, pos)
 	local player_name = player:get_player_name()
-	unified_inventory.home_pos[player_name] = pos
+	unified_inventory.home_pos[player_name] = vector.round(pos)
 	-- save the home data from the table to the file
 	local output = io.open(unified_inventory.home_filename, "w")
 	for k, v in pairs(unified_inventory.home_pos) do
-		if v ~= nil then
-			output:write(math.floor(v.x).." "
-					..math.floor(v.y).." "
-					..math.floor(v.z).." "
-					..k.."\n")
-		end
+		output:write(v.x.." "..v.y.." "..v.z.." "..k.."\n")
 	end
 	io.close(output)
 end
 
 function unified_inventory.go_home(player)
 	local pos = unified_inventory.home_pos[player:get_player_name()]
-	if pos ~= nil then
+	if pos then
 		player:setpos(pos)
 	end
 end
