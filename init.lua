@@ -43,7 +43,7 @@ unified_inventory = {
 	main_button_x = 0,
 	main_button_y = 9,
 	craft_result_x = 0.3,
-	craft_result_y = 0.6,
+	craft_result_y = 0.5,
 	form_header_y = 0
 }
 
@@ -54,7 +54,7 @@ if unified_inventory.lite_mode then
 	unified_inventory.formspec_y = 0.47
 	unified_inventory.main_button_x = 8.2
 	unified_inventory.main_button_y = 6.5
-	unified_inventory.craft_result_x = 2.3
+	unified_inventory.craft_result_x = 2.8
 	unified_inventory.craft_result_y = 3.4
 	unified_inventory.form_header_y = -0.1
 end

@@ -48,7 +48,7 @@ function unified_inventory.get_formspec(player, page)
 	-- Main buttons
 	for i, def in pairs(unified_inventory.buttons) do
 
-		if i > 4 then
+		if unified_inventory.lite_mode and i > 4 then
 			button_row = 1
 			button_col = 1
 		end

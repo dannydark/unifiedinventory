@@ -166,7 +166,7 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 		displayitem = group_item.item or "unknown"
 		selectitem = group_item.sole and displayitem or name
 	end
-	local label = string.format("\n\n%s%7d", show_is_group and "G" or "  ", count):gsub(" 1$", " .")
+	local label = string.format("\n\n%s%7d", show_is_group and "  G\n" or "  ", count):gsub(" 1$", " .")
 	if label == "\n\n        ." then label = "" end
 	return string.format("item_image_button[%f,%f;%u,%u;%s;%s;%s]",
 			x, y, w, h,
@@ -215,17 +215,17 @@ unified_inventory.register_page("craftguide", {
 			craft = crafts[alternate]
 		end
 
-		formspec = formspec.."background[0,"..unified_inventory.formspec_y..";8,3;ui_craftguide_form.png]"
+		formspec = formspec.."background[0.5,"..(unified_inventory.formspec_y + 0.2)..";8,3;ui_craftguide_form.png]"
 		formspec = formspec.."textarea["..unified_inventory.craft_result_x..","..unified_inventory.craft_result_y
                            ..";10,1;;"..minetest.formspec_escape(role_text[dir]..": "..item_name)..";]"
 		formspec = formspec..stack_image_button(0, unified_inventory.formspec_y, 1.1, 1.1, "item_button_"
 		                   .. rdir .. "_", ItemStack(item_name))
 
 		if not craft then
-			formspec = formspec.."label[6,"..(unified_inventory.formspec_y + 2.35)..";"
+			formspec = formspec.."label[5.5,"..(unified_inventory.formspec_y + 2.35)..";"
 			                   ..minetest.formspec_escape(no_recipe_text[dir]).."]"
-			local no_pos = dir == "recipe" and 4 or 6
-			local item_pos = dir == "recipe" and 6 or 4
+			local no_pos = dir == "recipe" and 4.5 or 6.5
+			local item_pos = dir == "recipe" and 6.5 or 4.5
 			formspec = formspec.."image["..no_pos..","..unified_inventory.formspec_y..";1.1,1.1;ui_no.png]"
 			formspec = formspec..stack_image_button(item_pos, unified_inventory.formspec_y, 1.1, 1.1, "item_button_"
 			                   ..other_dir[dir].."_", ItemStack(item_name))
@@ -241,16 +241,16 @@ unified_inventory.register_page("craftguide", {
 		local craft_type = unified_inventory.registered_craft_types[craft.type] or
 				unified_inventory.craft_type_defaults(craft.type, {})
 		if craft_type.icon then
-			formspec = formspec..string.format(" image[%f,%f;%f,%f;%s]",5.2,(unified_inventory.formspec_y - 0.15),0.5,0.5,craft_type.icon)
+			formspec = formspec..string.format(" image[%f,%f;%f,%f;%s]",5.7,(unified_inventory.formspec_y + 0.05),0.5,0.5,craft_type.icon)
 		end
-		formspec = formspec.."label[5,"..(unified_inventory.formspec_y + 0.5)..";" .. minetest.formspec_escape(craft_type.description).."]"
-		formspec = formspec..stack_image_button(6, unified_inventory.formspec_y, 1.1, 1.1, "item_button_usage_", ItemStack(craft.output))
+		formspec = formspec.."label[5.5,"..(unified_inventory.formspec_y + 1)..";" .. minetest.formspec_escape(craft_type.description).."]"
+		formspec = formspec..stack_image_button(6.5, unified_inventory.formspec_y, 1.1, 1.1, "item_button_usage_", ItemStack(craft.output))
 		local display_size = craft_type.dynamic_display_size and craft_type.dynamic_display_size(craft) or { width = craft_type.width, height = craft_type.height }
 		local craft_width = craft_type.get_shaped_craft_width and craft_type.get_shaped_craft_width(craft) or display_size.width
 
 		-- This keeps recipes aligned to the right,
 		-- so that they're close to the arrow.
-		local xoffset = 1 + (3 - display_size.width)
+		local xoffset = 1.5 + (3 - display_size.width)
 		for y = 1, display_size.height do
 		for x = 1, display_size.width do
 			local item
@@ -285,10 +285,10 @@ unified_inventory.register_page("craftguide", {
 		end
 
 		if alternates and alternates > 1 then
-			formspec = formspec.."label[6,"..(unified_inventory.formspec_y + 0.95)..";"..recipe_text[dir].." "
+			formspec = formspec.."label[5.5,"..(unified_inventory.formspec_y + 1.6)..";"..recipe_text[dir].." "
 					..tostring(alternate).." of "
 					..tostring(alternates).."]"
-					.."button[6,"..(unified_inventory.formspec_y + 1.3)..";2,1;alternate;" .. S("Alternate") .. "]"
+					.."button[5.5,"..(unified_inventory.formspec_y + 2)..";2,1;alternate;" .. S("Alternate") .. "]"
 		end
 		return {formspec = formspec}
 	end,
