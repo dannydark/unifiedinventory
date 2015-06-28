@@ -33,71 +33,73 @@ unified_inventory.register_button("craftguide", {
 	tooltip = S("Crafting Guide")
 })
 
-unified_inventory.register_button("home_gui_set", {
-	type = "image",
-	image = "ui_sethome_icon.png",
-	tooltip = S("Set home position"),
-	action = function(player)
-		local player_name = player:get_player_name()
-		unified_inventory.set_home(player, player:getpos())
-		local home = unified_inventory.home_pos[player_name]
-		if home ~= nil then
-			minetest.sound_play("dingdong",
-					{to_player=player_name, gain = 1.0})
-			minetest.chat_send_player(player_name,
-				S("Home position set to: %s"):format(minetest.pos_to_string(home)))
-		end
-	end,
-})
+if not unified_inventory.lite_mode then
+	unified_inventory.register_button("home_gui_set", {
+		type = "image",
+		image = "ui_sethome_icon.png",
+		tooltip = S("Set home position"),
+		action = function(player)
+			local player_name = player:get_player_name()
+			unified_inventory.set_home(player, player:getpos())
+			local home = unified_inventory.home_pos[player_name]
+			if home ~= nil then
+				minetest.sound_play("dingdong",
+						{to_player=player_name, gain = 1.0})
+				minetest.chat_send_player(player_name,
+					S("Home position set to: %s"):format(minetest.pos_to_string(home)))
+			end
+		end,
+	})
 
-unified_inventory.register_button("home_gui_go", {
-	type = "image",
-	image = "ui_gohome_icon.png",
-	tooltip = S("Go home"),
-	action = function(player)
-		minetest.sound_play("teleport",
-				{to_player=player:get_player_name(), gain = 1.0})
-		unified_inventory.go_home(player)
-	end,
-})
+	unified_inventory.register_button("home_gui_go", {
+		type = "image",
+		image = "ui_gohome_icon.png",
+		tooltip = S("Go home"),
+		action = function(player)
+			minetest.sound_play("teleport",
+					{to_player=player:get_player_name(), gain = 1.0})
+			unified_inventory.go_home(player)
+		end,
+	})
 
-unified_inventory.register_button("misc_set_day", {
-	type = "image",
-	image = "ui_sun_icon.png",
-	tooltip = S("Set time to day"),
-	action = function(player)
-		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {settime=true}) then
-			minetest.sound_play("birds",
-					{to_player=player_name, gain = 1.0})
-			minetest.set_timeofday((6000 % 24000) / 24000)
-			minetest.chat_send_player(player_name,
-				S("Time of day set to 6am"))
-		else
-			minetest.chat_send_player(player_name,
-				S("You don't have the settime priviledge!"))
-		end
-	end,
-})
-
-unified_inventory.register_button("misc_set_night", {
-	type = "image",
-	image = "ui_moon_icon.png",
-	tooltip = S("Set time to night"),
-	action = function(player)
-		local player_name = player:get_player_name()
-		if minetest.check_player_privs(player_name, {settime=true}) then
-			minetest.sound_play("owl",
-					{to_player=player_name, gain = 1.0})
-			minetest.set_timeofday((21000 % 24000) / 24000)
-			minetest.chat_send_player(player_name,
-					S("Time of day set to 9pm"))
-		else
-			minetest.chat_send_player(player_name,
+	unified_inventory.register_button("misc_set_day", {
+		type = "image",
+		image = "ui_sun_icon.png",
+		tooltip = S("Set time to day"),
+		action = function(player)
+			local player_name = player:get_player_name()
+			if minetest.check_player_privs(player_name, {settime=true}) then
+				minetest.sound_play("birds",
+						{to_player=player_name, gain = 1.0})
+				minetest.set_timeofday((6000 % 24000) / 24000)
+				minetest.chat_send_player(player_name,
+					S("Time of day set to 6am"))
+			else
+				minetest.chat_send_player(player_name,
 					S("You don't have the settime priviledge!"))
-		end
-	end,
-})
+			end
+		end,
+	})
+
+	unified_inventory.register_button("misc_set_night", {
+		type = "image",
+		image = "ui_moon_icon.png",
+		tooltip = S("Set time to night"),
+		action = function(player)
+			local player_name = player:get_player_name()
+			if minetest.check_player_privs(player_name, {settime=true}) then
+				minetest.sound_play("owl",
+						{to_player=player_name, gain = 1.0})
+				minetest.set_timeofday((21000 % 24000) / 24000)
+				minetest.chat_send_player(player_name,
+						S("Time of day set to 9pm"))
+			else
+				minetest.chat_send_player(player_name,
+						S("You don't have the settime priviledge!"))
+			end
+		end,
+	})
+end
 
 unified_inventory.register_button("clear_inv", {
 	type = "image",
@@ -123,22 +125,21 @@ unified_inventory.register_button("clear_inv", {
 unified_inventory.register_page("craft", {
 	get_formspec = function(player, formspec)
 		local player_name = player:get_player_name()
-		local formspec = "background[0,1;8,3;ui_crafting_form.png]"
-		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
-		formspec = formspec.."label[0,0;Crafting]"
+		local formspec = "background[0,"..unified_inventory.formspec_y..";8,3;ui_crafting_form.png]"
+		formspec = formspec.."background[0,"..(unified_inventory.formspec_y + 3.5)..";8,4;ui_main_inventory.png]"
+		formspec = formspec.."label[0,"..unified_inventory.form_header_y..";Crafting]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
-		formspec = formspec.."list[current_player;craftpreview;6,1;1,1;]"
-		formspec = formspec.."list[current_player;craft;2,1;3,3;]"
-		formspec = formspec.."label[7,2.5;" .. S("Trash:") .. "]"
-		formspec = formspec.."list[detached:trash;main;7,3;1,1;]"
+		formspec = formspec.."list[current_player;craftpreview;6,"..unified_inventory.formspec_y..";1,1;]"
+		formspec = formspec.."list[current_player;craft;2,"..unified_inventory.formspec_y..";3,3;]"
+		formspec = formspec.."label[7,"..(unified_inventory.formspec_y + 1.5)..";" .. S("Trash:") .. "]"
+		formspec = formspec.."list[detached:trash;main;7,"..(unified_inventory.formspec_y + 2)..";1,1;]"
 		if unified_inventory.is_creative(player_name) then
-			formspec = formspec.."label[0,2.5;" .. S("Refill:") .. "]"
-			formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."refill;main;0,3;1,1;]"
+			formspec = formspec.."label[0,"..(unified_inventory.formspec_y + 1.5)..";" .. S("Refill:") .. "]"
+			formspec = formspec.."list[detached:"..minetest.formspec_escape(player_name).."refill;main;0,"..(unified_inventory.formspec_y +2)..";1,1;]"
 		end
 		return {formspec=formspec}
 	end,
 })
-
 
 -- stack_image_button(): generate a form button displaying a stack of items
 --
@@ -167,7 +168,7 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 	end
 	local label = string.format("\n\n%s%7d", show_is_group and "G" or "  ", count):gsub(" 1$", " .")
 	if label == "\n\n        ." then label = "" end
-	return string.format("item_image_button[%u,%u;%u,%u;%s;%s;%s]",
+	return string.format("item_image_button[%f,%f;%u,%u;%s;%s;%s]",
 			x, y, w, h,
 			minetest.formspec_escape(displayitem),
 			minetest.formspec_escape(buttonname_prefix..unified_inventory.mangle_for_formspec(selectitem)),
@@ -196,8 +197,8 @@ unified_inventory.register_page("craftguide", {
 		local player_name = player:get_player_name()
 		local player_privs = minetest.get_player_privs(player_name)
 		local formspec = ""
-		formspec = formspec.."background[0,4.5;8,4;ui_main_inventory.png]"
-		formspec = formspec.."label[0,0;" .. S("Crafting Guide") .. "]"
+		formspec = formspec.."background[0,"..(unified_inventory.formspec_y + 3.5)..";8,4;ui_main_inventory.png]"
+		formspec = formspec.."label[0,"..unified_inventory.form_header_y..";" .. S("Crafting Guide") .. "]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
 		local item_name = unified_inventory.current_item[player_name]
 		if not item_name then return {formspec=formspec} end
@@ -214,21 +215,25 @@ unified_inventory.register_page("craftguide", {
 			craft = crafts[alternate]
 		end
 
-		formspec = formspec.."background[0,1;8,3;ui_craftguide_form.png]"
-		formspec = formspec.."textarea[0.3,0.6;10,1;;"..minetest.formspec_escape(role_text[dir]..": "..item_name)..";]"
-		formspec = formspec..stack_image_button(0, 1, 1.1, 1.1, "item_button_" .. rdir .. "_", ItemStack(item_name))
+		formspec = formspec.."background[0,"..unified_inventory.formspec_y..";8,3;ui_craftguide_form.png]"
+		formspec = formspec.."textarea["..unified_inventory.craft_result_x..","..unified_inventory.craft_result_y
+                           ..";10,1;;"..minetest.formspec_escape(role_text[dir]..": "..item_name)..";]"
+		formspec = formspec..stack_image_button(0, unified_inventory.formspec_y, 1.1, 1.1, "item_button_"
+		                   .. rdir .. "_", ItemStack(item_name))
 
 		if not craft then
-			formspec = formspec.."label[6,3.35;"..minetest.formspec_escape(no_recipe_text[dir]).."]"
+			formspec = formspec.."label[6,"..(unified_inventory.formspec_y + 2.35)..";"
+			                   ..minetest.formspec_escape(no_recipe_text[dir]).."]"
 			local no_pos = dir == "recipe" and 4 or 6
 			local item_pos = dir == "recipe" and 6 or 4
-			formspec = formspec.."image["..no_pos..",1;1.1,1.1;ui_no.png]"
-			formspec = formspec..stack_image_button(item_pos, 1, 1.1, 1.1, "item_button_"..other_dir[dir].."_", ItemStack(item_name))
+			formspec = formspec.."image["..no_pos..","..unified_inventory.formspec_y..";1.1,1.1;ui_no.png]"
+			formspec = formspec..stack_image_button(item_pos, unified_inventory.formspec_y, 1.1, 1.1, "item_button_"
+			                   ..other_dir[dir].."_", ItemStack(item_name))
 			if player_privs.give == true then
-				formspec = formspec.."label[0,3.10;" .. S("Give me:") .. "]"
-						.."button[0,  3.70;0.6,0.5;craftguide_giveme_1;1]"
-						.."button[0.6,3.70;0.7,0.5;craftguide_giveme_10;10]"
-						.."button[1.3,3.70;0.8,0.5;craftguide_giveme_99;99]"
+				formspec = formspec.."label[0,"..(unified_inventory.formspec_y + 2.10)..";" .. S("Give me:") .. "]"
+						.."button[0,  "..(unified_inventory.formspec_y + 2.7)..";0.6,0.5;craftguide_giveme_1;1]"
+						.."button[0.6,"..(unified_inventory.formspec_y + 2.7)..";0.7,0.5;craftguide_giveme_10;10]"
+						.."button[1.3,"..(unified_inventory.formspec_y + 2.7)..";0.8,0.5;craftguide_giveme_99;99]"
 			end
 			return {formspec = formspec}
 		end
@@ -236,10 +241,10 @@ unified_inventory.register_page("craftguide", {
 		local craft_type = unified_inventory.registered_craft_types[craft.type] or
 				unified_inventory.craft_type_defaults(craft.type, {})
 		if craft_type.icon then
-			formspec = formspec..string.format(" image[%f,%f;%f,%f;%s]",5.2,0.85,0.5,0.5,craft_type.icon)
+			formspec = formspec..string.format(" image[%f,%f;%f,%f;%s]",5.2,(unified_inventory.formspec_y - 0.15),0.5,0.5,craft_type.icon)
 		end
-		formspec = formspec.."label[5,1.50;" .. minetest.formspec_escape(craft_type.description).."]"
-		formspec = formspec..stack_image_button(6, 1, 1.1, 1.1, "item_button_usage_", ItemStack(craft.output))
+		formspec = formspec.."label[5,"..(unified_inventory.formspec_y + 0.5)..";" .. minetest.formspec_escape(craft_type.description).."]"
+		formspec = formspec..stack_image_button(6, unified_inventory.formspec_y, 1.1, 1.1, "item_button_usage_", ItemStack(craft.output))
 		local display_size = craft_type.dynamic_display_size and craft_type.dynamic_display_size(craft) or { width = craft_type.width, height = craft_type.height }
 		local craft_width = craft_type.get_shaped_craft_width and craft_type.get_shaped_craft_width(craft) or display_size.width
 
@@ -254,36 +259,36 @@ unified_inventory.register_page("craftguide", {
 			end
 			if item then
 				formspec = formspec..stack_image_button(
-						xoffset + x, y, 1.1, 1.1,
+						xoffset + x, unified_inventory.formspec_y - 1 + y, 1.1, 1.1,
 						"item_button_recipe_",
 						ItemStack(item))
 			else
 				-- Fake buttons just to make grid
 				formspec = formspec.."image_button["
-					..tostring(xoffset + x)..","..tostring(y)
+					..tostring(xoffset + x)..","..tostring(unified_inventory.formspec_y - 1 + y)
 					..";1,1;ui_blank_image.png;;]"
 			end
 		end
 		end
 
 		if craft_type.uses_crafting_grid then
-			formspec = formspec.."label[0,1.90;" .. S("To craft grid:") .. "]"
-					.."button[0,  2.5;0.6,0.5;craftguide_craft_1;1]"
-					.."button[0.6,2.5;0.7,0.5;craftguide_craft_10;10]"
-					.."button[1.3,2.5;0.8,0.5;craftguide_craft_max;" .. S("All") .. "]"
+			formspec = formspec.."label[0,"..(unified_inventory.formspec_y + 0.9)..";" .. S("To craft grid:") .. "]"
+					.."button[0,  "..(unified_inventory.formspec_y + 1.5)..";0.6,0.5;craftguide_craft_1;1]"
+					.."button[0.6,"..(unified_inventory.formspec_y + 1.5)..";0.7,0.5;craftguide_craft_10;10]"
+					.."button[1.3,"..(unified_inventory.formspec_y + 1.5)..";0.8,0.5;craftguide_craft_max;" .. S("All") .. "]"
 		end
 		if player_privs.give then
-			formspec = formspec.."label[0,3.10;" .. S("Give me:") .. "]"
-					.."button[0,  3.70;0.6,0.5;craftguide_giveme_1;1]"
-					.."button[0.6,3.70;0.7,0.5;craftguide_giveme_10;10]"
-					.."button[1.3,3.70;0.8,0.5;craftguide_giveme_99;99]"
+			formspec = formspec.."label[0,"..(unified_inventory.formspec_y + 2.1)..";" .. S("Give me:") .. "]"
+					.."button[0,  "..(unified_inventory.formspec_y + 2.7)..";0.6,0.5;craftguide_giveme_1;1]"
+					.."button[0.6,"..(unified_inventory.formspec_y + 2.7)..";0.7,0.5;craftguide_giveme_10;10]"
+					.."button[1.3,"..(unified_inventory.formspec_y + 2.7)..";0.8,0.5;craftguide_giveme_99;99]"
 		end
 
 		if alternates and alternates > 1 then
-			formspec = formspec.."label[6,1.95;"..recipe_text[dir].." "
+			formspec = formspec.."label[6,"..(unified_inventory.formspec_y + 0.95)..";"..recipe_text[dir].." "
 					..tostring(alternate).." of "
 					..tostring(alternates).."]"
-					.."button[6,2.3;2,1;alternate;" .. S("Alternate") .. "]"
+					.."button[6,"..(unified_inventory.formspec_y + 1.3)..";2,1;alternate;" .. S("Alternate") .. "]"
 		end
 		return {formspec = formspec}
 	end,
