@@ -179,6 +179,7 @@ end
 
 --apply filter to the inventory list (create filtered copy of full one)
 function unified_inventory.apply_filter(player, filter, search_dir)
+	if not player then return false end
 	local player_name = player:get_player_name()
 	local lfilter = string.lower(filter)
 	local ffilter
