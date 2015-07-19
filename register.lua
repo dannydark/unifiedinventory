@@ -40,13 +40,18 @@ if not unified_inventory.lite_mode then
 		tooltip = S("Set home position"),
 		action = function(player)
 			local player_name = player:get_player_name()
-			unified_inventory.set_home(player, player:getpos())
-			local home = unified_inventory.home_pos[player_name]
-			if home ~= nil then
-				minetest.sound_play("dingdong",
-						{to_player=player_name, gain = 1.0})
+			if minetest.check_player_privs(player_name, {home=true}) then
+				unified_inventory.set_home(player, player:getpos())
+				local home = unified_inventory.home_pos[player_name]
+				if home ~= nil then
+					minetest.sound_play("dingdong",
+							{to_player=player_name, gain = 1.0})
+					minetest.chat_send_player(player_name,
+						S("Home position set to: %s"):format(minetest.pos_to_string(home)))
+				end
+			else
 				minetest.chat_send_player(player_name,
-					S("Home position set to: %s"):format(minetest.pos_to_string(home)))
+					S("You don't have the \"home\" privilege!"))
 			end
 		end,
 	})
@@ -56,9 +61,15 @@ if not unified_inventory.lite_mode then
 		image = "ui_gohome_icon.png",
 		tooltip = S("Go home"),
 		action = function(player)
-			minetest.sound_play("teleport",
+			local player_name = player:get_player_name()
+			if minetest.check_player_privs(player_name, {home=true}) then
+				minetest.sound_play("teleport",
 					{to_player=player:get_player_name(), gain = 1.0})
-			unified_inventory.go_home(player)
+				unified_inventory.go_home(player)
+			else
+				minetest.chat_send_player(player_name,
+					S("You don't have the \"home\" privilege!"))
+			end
 		end,
 	})
 
