@@ -202,7 +202,11 @@ function unified_inventory.apply_filter(player, filter, search_dir)
 	end
 	unified_inventory.filtered_items_list[player_name]={}
 	for name, def in pairs(minetest.registered_items) do
-		if (def.groups.not_in_creative_inventory or 0) == 0 and (def.description or "") ~= "" and ffilter(name, def) then
+		if (def.groups.not_in_creative_inventory or 0) == 0
+		  and (def.description or "") ~= ""
+		  and ffilter(name, def)
+		  and (unified_inventory.is_creative(player_name)
+		       or unified_inventory.crafts_for.recipe[def.name]) then
 			table.insert(unified_inventory.filtered_items_list[player_name], name)
 		end
 	end
