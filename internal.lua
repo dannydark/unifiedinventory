@@ -32,6 +32,10 @@ function unified_inventory.get_formspec(player, page)
 		formspec = formspec .. "background[-0.19,-0.2;11.4,8.4;ui_form_bg.png]"
 	end
 
+	if unified_inventory.is_creative(player_name) and page == "craft" then
+		formspec = formspec.."background[0,"..(unified_inventory.formspec_y + 2)..";1,1;ui_single_slot.png]"
+	end
+
 	local fsdata = nil
 
 	-- Current page

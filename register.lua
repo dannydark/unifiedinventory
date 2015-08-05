@@ -136,7 +136,7 @@ unified_inventory.register_button("clear_inv", {
 unified_inventory.register_page("craft", {
 	get_formspec = function(player, formspec)
 		local player_name = player:get_player_name()
-		local formspec = "background[0,"..unified_inventory.formspec_y..";8,3;ui_crafting_form.png]"
+		local formspec = "background[2,"..unified_inventory.formspec_y..";6,3;ui_crafting_form.png]"
 		formspec = formspec.."background[0,"..(unified_inventory.formspec_y + 3.5)..";8,4;ui_main_inventory.png]"
 		formspec = formspec.."label[0,"..unified_inventory.form_header_y..";Crafting]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
