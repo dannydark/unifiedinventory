@@ -127,27 +127,27 @@ minetest.register_tool("unified_inventory:bag_large", {
 minetest.register_craft({
 	output = "unified_inventory:bag_small",
 	recipe = {
-		{"",           "group:stick", ""},
-		{"group:wood", "group:wood",    "group:wood"},
-		{"group:wood", "group:wood",    "group:wood"},
+		{"",           "farming:cotton", ""},
+		{"group:wool", "group:wool",     "group:wool"},
+		{"group:wool", "group:wool",     "group:wool"},
 	},
 })
 
 minetest.register_craft({
 	output = "unified_inventory:bag_medium",
 	recipe = {
-		{"",              "",                            ""},
-		{"group:stick", "unified_inventory:bag_small", "group:stick"},
-		{"group:stick", "unified_inventory:bag_small", "group:stick"},
+		{"",               "",                            ""},
+		{"farming:cotton", "unified_inventory:bag_small", "farming:cotton"},
+		{"farming:cotton", "unified_inventory:bag_small", "farming:cotton"},
 	},
 })
 
 minetest.register_craft({
 	output = "unified_inventory:bag_large",
 	recipe = {
-		{"",              "",                             ""},
-		{"group:stick", "unified_inventory:bag_medium", "group:stick"},
-		{"group:stick", "unified_inventory:bag_medium", "group:stick"},
+		{"",               "",                             ""},
+		{"farming:cotton", "unified_inventory:bag_medium", "farming:cotton"},
+		{"farming:cotton", "unified_inventory:bag_medium", "farming:cotton"},
     },
 })
 
