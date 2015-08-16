@@ -87,7 +87,7 @@ if not unified_inventory.lite_mode then
 					S("Time of day set to 6am"))
 			else
 				minetest.chat_send_player(player_name,
-					S("You don't have the settime priviledge!"))
+					S("You don't have the settime privilege!"))
 			end
 		end,
 	})
@@ -106,7 +106,7 @@ if not unified_inventory.lite_mode then
 						S("Time of day set to 9pm"))
 			else
 				minetest.chat_send_player(player_name,
-						S("You don't have the settime priviledge!"))
+						S("You don't have the settime privilege!"))
 			end
 		end,
 	})
@@ -326,6 +326,80 @@ local function craftguide_giveme(player, formname, fields)
 	player_inv:add_item("main", {name = output, count = amount})
 end
 
+-- tells if an item can be moved and returns an index if so
+local function item_fits(player_inv, craft_item, needed_item)
+	local need_group = string.sub(needed_item, 1, 6) == "group:"
+	if need_group then
+		need_group = string.sub(needed_item, 7)
+	end
+	if craft_item
+	and not craft_item:is_empty() then
+		local ciname = craft_item:get_name()
+
+		-- abort if the item there isn't usable
+		if ciname ~= needed_item
+		and not need_group then
+			return
+		end
+
+		-- abort if no item fits onto it
+		if craft_item:get_count() >= craft_item:get_definition().stack_max then
+			return
+		end
+
+		-- use the item there if it's in the right group and a group item is needed
+		if need_group then
+			if minetest.get_item_group(ciname, need_group) == 0 then
+				return
+			end
+			needed_item = ciname
+			need_group = false
+		end
+	end
+
+	if need_group then
+		-- search an item of the specific group
+		for i,item in pairs(player_inv:get_list("main")) do
+			if not item:is_empty()
+			and minetest.get_item_group(item:get_name(), need_group) > 0 then
+				return i
+			end
+		end
+
+		-- no index found
+		return
+	end
+
+	-- search an item with a the name needed_item
+	for i,item in pairs(player_inv:get_list("main")) do
+		if not item:is_empty()
+		and item:get_name() == needed_item then
+			return i
+		end
+	end
+
+	-- no index found
+end
+
+-- modifies the player inventory and returns the changed craft_item if possible
+local function move_item(player_inv, craft_item, needed_item)
+	local stackid = item_fits(player_inv, craft_item, needed_item)
+	if not stackid then
+		return
+	end
+	local wanted_stack = player_inv:get_stack("main", stackid)
+	local taken_item = wanted_stack:take_item()
+	player_inv:set_stack("main", stackid, wanted_stack)
+
+	if not craft_item
+	or craft_item:is_empty() then
+		return taken_item
+	end
+
+	craft_item:add_item(taken_item)
+	return craft_item
+end
+
 local function craftguide_craft(player, formname, fields)
 	local amount
 	for k, v in pairs(fields) do
@@ -358,11 +432,13 @@ local function craftguide_craft(player, formname, fields)
 		width = 3
 	end
 
+	amount = tonumber(amount) or 99
+	--[[
 	if amount == "max" then
 		amount = 99 -- Arbitrary; need better way to do this.
 	else
 		amount = tonumber(amount)
-	end
+	end--]]
 
 	for iter = 1, amount do
 		local index = 1
@@ -372,17 +448,9 @@ local function craftguide_craft(player, formname, fields)
 				if needed_item then
 					local craft_index = ((y - 1) * 3) + x
 					local craft_item = craft_list[craft_index]
-					if (not craft_item) or (craft_item:is_empty()) or (craft_item:get_name() == needed_item) then
-						itemname = craft_item and craft_item:get_name() or needed_item
-						local needed_stack = ItemStack(needed_item)
-						if player_inv:contains_item("main", needed_stack) then
-							local count = (craft_item and craft_item:get_count() or 0) + 1
-							if count <= needed_stack:get_definition().stack_max then
-								local stack = ItemStack({name=needed_item, count=count})
-								craft_list[craft_index] = stack
-								player_inv:remove_item("main", needed_stack)
-							end
-						end
+					local newitem = move_item(player_inv, craft_item, needed_item)
+					if newitem then
+						craft_list[craft_index] = newitem
 					end
 				end
 				index = index + 1
@@ -399,10 +467,11 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	for k, v in pairs(fields) do
 		if k:match("craftguide_craft_") then
 			craftguide_craft(player, formname, fields)
-			break
-		elseif k:match("craftguide_giveme_") then
+			return
+		end
+		if k:match("craftguide_giveme_") then
 			craftguide_giveme(player, formname, fields)
-			break
+			return
 		end
 	end
 end)
