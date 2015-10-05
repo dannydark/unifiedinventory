@@ -26,7 +26,8 @@ unified_inventory.register_page("bags", {
 unified_inventory.register_button("bags", {
 	type = "image",
 	image = "ui_bags_icon.png",
-	tooltip = S("Bags")
+	tooltip = S("Bags"),
+	hide_lite=true
 })
 
 for i = 1, 4 do

@@ -107,6 +107,7 @@ unified_inventory.register_button("waypoints", {
 	type = "image",
 	image = "ui_waypoints_icon.png",
 	tooltip = S("Waypoints"),
+	hide_lite=true
 })
 
 local function update_hud(player, waypoints, temp, i)
