@@ -16,6 +16,11 @@ local waypoints_temp = {}
 unified_inventory.register_page("waypoints", {
 	get_formspec = function(player)
 		local player_name = player:get_player_name()
+
+		-- build a "fake" temp entry if the server took too long
+		-- during sign-on and returned an empty entry
+		if not waypoints_temp[player_name] then waypoints_temp[player_name] = {hud = 1} end
+
 		local waypoints = datastorage.get(player_name, "waypoints")
 		local formspec = "background[0,4.5;8,4;ui_main_inventory.png]" ..
 			"image[0,0;1,1;ui_waypoints_icon.png]" ..
