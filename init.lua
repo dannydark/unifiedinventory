@@ -48,7 +48,8 @@ unified_inventory = {
 }
 
 -- Disable default creative inventory
-if rawget(_G, "creative") then
+local creative = rawget(_G, "creative") or rawget(_G, "creative_inventory")
+if creative then
 	function creative.set_creative_formspec(player, start_i, pagenum)
 		return
 	end
