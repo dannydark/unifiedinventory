@@ -144,11 +144,36 @@ minetest.register_on_joinplayer(function(player)
 			player:get_inventory():set_stack(listname, index, nil)
 		end,
 		allow_put = function(inv, listname, index, stack, player)
-			if stack:get_definition().groups.bagslots then
-				return 1
-			else
-				return 0
+			local new_slots = stack:get_definition().groups.bagslots
+			if new_slots then
+				local player_inv = player:get_inventory()
+				local old_slots = player_inv:get_size(listname.."contents")
+
+				if new_slots >= old_slots then
+					return 1
+				else
+					-- using a smaller bag, make sure it fits
+					local old_list = player_inv:get_list(listname.."contents")
+					local new_list = {}
+					local slots_used = 0
+					local use_new_list = false
+
+					for i, v in ipairs(old_list) do
+						if v and not v:is_empty() then
+							slots_used = slots_used + 1
+							use_new_list = i > new_slots
+							new_list[slots_used] = v
+						end
+					end
+					if new_slots >= slots_used then
+						if use_new_list then
+							player_inv:set_list(listname.."contents", new_list)
+						end
+						return 1
+					end
+				end
 			end
+			return 0
 		end,
 		allow_take = function(inv, listname, index, stack, player)
 			if player:get_inventory():is_empty(listname.."contents") then
