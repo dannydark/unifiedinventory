@@ -26,6 +26,7 @@ Search =
 
 ### register.lua ###
 Can use the creative inventory = 
+Forces Unified Inventory to be displayed in Full mode if Lite mode is configured globally =
 Home position set to: %s = 
 Time of day set to 6am = 
 You don't have the settime priviledge! = 
@@ -47,6 +48,17 @@ All =
 Recipe %s of %s = 
 Alternate = 
 Crafting Grid =  
+Recipe =
+Usage =
+No recipes =
+No usages =
+Result =
+Ingredient =
+Set time to day =
+Set time to night =
+Set home position =
+Go home =
+Clear inventory =
 
 ### waypoints.lua ###
 White = 

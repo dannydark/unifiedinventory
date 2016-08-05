@@ -1,12 +1,12 @@
 local S = unified_inventory.gettext
 
 minetest.register_privilege("creative", {
-	description = "Can use the creative inventory",
+	description = S("Can use the creative inventory"),
 	give_to_singleplayer = false,
 })
 
 minetest.register_privilege("ui_full", {
-	description = "Forces UI to display in Full mode when Lite mode is configured globally",
+	description = S("Forces Unified Inventory to be displayed in Full mode if Lite mode is configured globally"),
 	give_to_singleplayer = false,
 })
 
@@ -135,7 +135,7 @@ unified_inventory.register_button("clear_inv", {
 			return
 		end
 		player:get_inventory():set_list("main", {})
-		minetest.chat_send_player(player_name, 'Inventory Cleared!')
+		minetest.chat_send_player(player_name, S('Inventory cleared!'))
 		minetest.sound_play("trash_all",
 				{to_player=player_name, gain = 1.0})
 	end,
@@ -150,7 +150,7 @@ unified_inventory.register_page("craft", {
 		local player_name = player:get_player_name()
 		local formspec = "background[2,"..formspecy..";6,3;ui_crafting_form.png]"
 		formspec = formspec.."background[0,"..(formspecy + 3.5)..";8,4;ui_main_inventory.png]"
-		formspec = formspec.."label[0,"..formheadery..";Crafting]"
+		formspec = formspec.."label[0,"..formheadery..";" ..S("Crafting").."]"
 		formspec = formspec.."listcolors[#00000000;#00000000]"
 		formspec = formspec.."list[current_player;craftpreview;6,"..formspecy..";1,1;]"
 		formspec = formspec.."list[current_player;craft;2,"..formspecy..";3,3;]"
@@ -242,13 +242,13 @@ unified_inventory.register_page("craftguide", {
 
 		formspec = formspec.."background[0.5,"..(formspecy + 0.2)..";8,3;ui_craftguide_form.png]"
 		formspec = formspec.."textarea["..craftresultx..","..craftresulty
-                           ..";10,1;;"..minetest.formspec_escape(role_text[dir]..": "..item_name)..";]"
+                           ..";10,1;;"..minetest.formspec_escape(S(role_text[dir])..": "..item_name)..";]"
 		formspec = formspec..stack_image_button(0, formspecy, 1.1, 1.1, "item_button_"
 		                   .. rdir .. "_", ItemStack(item_name))
 
 		if not craft then
 			formspec = formspec.."label[5.5,"..(formspecy + 2.35)..";"
-			                   ..minetest.formspec_escape(no_recipe_text[dir]).."]"
+			                   ..minetest.formspec_escape(S(no_recipe_text[dir])).."]"
 			local no_pos = dir == "recipe" and 4.5 or 6.5
 			local item_pos = dir == "recipe" and 6.5 or 4.5
 			formspec = formspec.."image["..no_pos..","..formspecy..";1.1,1.1;ui_no.png]"
@@ -310,7 +310,7 @@ unified_inventory.register_page("craftguide", {
 		end
 
 		if alternates and alternates > 1 then
-			formspec = formspec.."label[5.5,"..(formspecy + 1.6)..";"..recipe_text[dir].." "
+			formspec = formspec.."label[5.5,"..(formspecy + 1.6)..";"..S(recipe_text[dir]).." "
 					..tostring(alternate).." of "
 					..tostring(alternates).."]"
 					.."button[5.5,"..(formspecy + 2)..";2,1;alternate;" .. S("Alternate") .. "]"
