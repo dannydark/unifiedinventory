@@ -40,7 +40,7 @@ unified_inventory.register_page("waypoints", {
 		local i = waypoints.selected or 1
 		local waypoint = waypoints[i] or {}
 		local temp = waypoints_temp[player_name][i] or {}
-		local default_name = "Waypoint "..i
+		local default_name = string.format(S("Waypoint %d"), i)
 
 		-- Main buttons:
 		formspec = formspec ..

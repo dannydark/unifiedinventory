@@ -71,6 +71,7 @@ Red =
 Green = 
 Blue = 
 Waypoints = 
+Waypoint %d = 
 Waypoint active = 
 Waypoint inactive = 
 World position = 

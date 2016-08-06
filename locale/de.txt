@@ -69,6 +69,7 @@ Red = Rot
 Green = Grün
 Blue = Blau
 Waypoints = Markierungen
+Waypoint %d = Wegpunkt Nr. %d
 Waypoint active = Markierung aktiv
 Waypoint inactive = Markierung inaktiv
 World position = Weltposition
