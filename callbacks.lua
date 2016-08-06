@@ -120,6 +120,9 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			if string.sub(clicked_item, 1, 6) == "group:" then
 				minetest.sound_play("click", {to_player=player_name, gain = 0.1})
 				unified_inventory.apply_filter(player, clicked_item, new_dir)
+				unified_inventory.current_searchbox[player_name] = clicked_item
+				unified_inventory.set_inventory_formspec(player,
+					unified_inventory.current_page[player_name])
 				return
 			end
 			if new_dir == "recipe"
