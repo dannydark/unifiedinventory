@@ -160,8 +160,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 				{to_player=player_name, gain = 1.0})
 	end
 
-	-- alternate button
-	if not fields.alternate then
+	-- alternate buttons
+	if not (fields.alternate or fields.alternate_prev) then
 		return
 	end
 	minetest.sound_play("click",
@@ -178,9 +178,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 	if alternates <= 1 then
 		return
 	end
-	local alternate = unified_inventory.alternate[player_name] + 1
-	if alternate > alternates then
-		alternate = 1
+	local alternate
+	if fields.alternate then
+		alternate = unified_inventory.alternate[player_name] + 1
+		if alternate > alternates then
+			alternate = 1
+		end
+	elseif fields.alternate_prev then
+		alternate = unified_inventory.alternate[player_name] - 1
+		if alternate < 1 then
+			alternate = alternates
+		end
 	end
 	unified_inventory.alternate[player_name] = alternate
 	unified_inventory.set_inventory_formspec(player,
