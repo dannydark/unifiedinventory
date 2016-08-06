@@ -158,7 +158,7 @@ end
 
 
 unified_inventory.register_craft_type("normal", {
-	description = "Crafting",
+	description = S("Crafting"),
 	icon = "ui_craftgrid_icon.png",
 	width = 3,
 	height = 3,
@@ -174,7 +174,7 @@ unified_inventory.register_craft_type("normal", {
 
 
 unified_inventory.register_craft_type("shapeless", {
-	description = "Mixing",
+	description = S("Mixing"),
 	icon = "ui_craftgrid_icon.png",
 	width = 3,
 	height = 3,
@@ -189,7 +189,7 @@ unified_inventory.register_craft_type("shapeless", {
 
 
 unified_inventory.register_craft_type("cooking", {
-	description = "Cooking",
+	description = S("Cooking"),
 	icon = "default_furnace_front.png",
 	width = 1,
 	height = 1,
@@ -197,7 +197,7 @@ unified_inventory.register_craft_type("cooking", {
 
 
 unified_inventory.register_craft_type("digging", {
-	description = "Digging",
+	description = S("Digging"),
 	icon = "default_tool_steelpick.png",
 	width = 1,
 	height = 1,

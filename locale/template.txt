@@ -34,6 +34,9 @@ Time of day set to 9pm =
 This button has been disabled outside of creative mode to prevent accidental inventory trashing.\nUse the trash slot instead. = 
 Inventory Cleared! = 
 Crafting = 
+Digging = 
+Cooking = 
+Mixing = 
 Trash: = 
 Refill: = 
 Crafting Guide = 
@@ -59,6 +62,8 @@ Set time to night =
 Set home position =
 Go home =
 Clear inventory =
+Give me: =
+To craft grid: =
 
 ### waypoints.lua ###
 White = 
