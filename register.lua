@@ -195,8 +195,8 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 end
 
 local recipe_text = {
-	recipe = "Recipe",
-	usage = "Usage",
+	recipe = "Recipe %d of %d",
+	usage = "Usage %d of %d",
 }
 local no_recipe_text = {
 	recipe = "No recipes",
@@ -310,9 +310,8 @@ unified_inventory.register_page("craftguide", {
 		end
 
 		if alternates and alternates > 1 then
-			formspec = formspec.."label[5.5,"..(formspecy + 1.6)..";"..S(recipe_text[dir]).." "
-					..tostring(alternate).." of "
-					..tostring(alternates).."]"
+			formspec = formspec.."label[5.5,"..(formspecy + 1.6)..";"
+					..string.format(S(recipe_text[dir]), alternate, alternates).."]"
 					.."button[5.5,"..(formspecy + 2)..";2,1;alternate;" .. S("Alternate") .. "]"
 		end
 		return {formspec = formspec}
