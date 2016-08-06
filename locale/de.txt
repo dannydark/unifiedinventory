@@ -25,6 +25,7 @@ Page = Seite
 %s of %s = %s von %s
 Filter = Filter
 Search = Suchen
+Reset search and display everything = Suche zurücksetzen und alles anzeigen
 
 ### register.lua ###
 Can use the creative inventory = Kann das Kreativinventar nutzen

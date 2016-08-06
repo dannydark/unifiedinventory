@@ -26,6 +26,7 @@ Page =
 %s of %s = 
 Filter = 
 Search = 
+Reset search and display everything = 
 
 ### register.lua ###
 Can use the creative inventory = 
