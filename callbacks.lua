@@ -153,11 +153,17 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 
 	if fields.searchbutton then
 		unified_inventory.apply_filter(player, unified_inventory.current_searchbox[player_name], "nochange")
-		unified_inventory.current_searchbox[player_name] = ""
 		unified_inventory.set_inventory_formspec(player,
 				unified_inventory.current_page[player_name])
 		minetest.sound_play("paperflip2",
 				{to_player=player_name, gain = 1.0})
+	elseif fields.searchresetbutton then
+		unified_inventory.apply_filter(player, "", "nochange")
+		unified_inventory.current_searchbox[player_name] = ""
+		unified_inventory.set_inventory_formspec(player,
+				unified_inventory.current_page[player_name])
+		minetest.sound_play("click",
+				{to_player=player_name, gain = 0.1})
 	end
 
 	-- alternate buttons
