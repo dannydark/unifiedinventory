@@ -24,6 +24,12 @@ end
 unified_inventory.registered_group_items = {
 	mesecon_conductor_craftable = "mesecons:wire_00000000_off",
 	stone = "default:cobble",
+	wood = "default:wood",
+	book = "default:book",
+	sand = "default:sand",
+	leaves = "default:leaves",
+	tree = "default:tree",
+	vessel = "vessels:glass_bottle",
 	wool = "wool:white",
 }
 
