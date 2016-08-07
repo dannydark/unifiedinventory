@@ -55,6 +55,21 @@ minetest.after(0.01, function()
 				})
 
 			end
+		elseif type(def.drop) == "table" then
+			for i=1,#def.drop.items do
+				local itit = def.drop.items[i]
+				for j=1,#itit.items do
+					local dstack = ItemStack(itit.items[j])
+					if not dstack:is_empty() and dstack:get_name() ~= name then
+						unified_inventory.register_craft({
+							type = "digging_chance",
+							items = {name},
+							output = dstack:get_name(),
+							width = 0,
+						})
+					end
+				end
+			end
 		end
 	end
 	for _, recipes in pairs(unified_inventory.crafts_for.recipe) do
@@ -203,6 +218,12 @@ unified_inventory.register_craft_type("digging", {
 	height = 1,
 })
 
+unified_inventory.register_craft_type("digging_chance", {
+	description = "Digging (by chance)",
+	icon = "default_tool_steelpick.png^[transformFY.png",
+	width = 1,
+	height = 1,
+})
 
 function unified_inventory.register_page(name, def)
 	unified_inventory.pages[name] = def

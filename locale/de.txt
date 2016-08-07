@@ -1,5 +1,8 @@
 # Translation mostly by Xanthin
 
+### api.lua ###
+Digging (by chance) = Graben (durch Zufall)
+
 ### bags.lua ###
 Bags = Rucksaecke
 Bag 1 = Rucksack 1
