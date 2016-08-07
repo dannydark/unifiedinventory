@@ -215,30 +215,31 @@ minetest.register_tool("unified_inventory:bag_large", {
 })
 
 -- register bag crafts
-minetest.register_craft({
-	output = "unified_inventory:bag_small",
-	recipe = {
-		{"",           "farming:cotton", ""},
-		{"group:wool", "group:wool",     "group:wool"},
-		{"group:wool", "group:wool",     "group:wool"},
-	},
-})
+if minetest.get_modpath("farming") ~= nil then
+	minetest.register_craft({
+		output = "unified_inventory:bag_small",
+		recipe = {
+			{"",           "farming:cotton", ""},
+			{"group:wool", "group:wool",     "group:wool"},
+			{"group:wool", "group:wool",     "group:wool"},
+		},
+	})
 
-minetest.register_craft({
-	output = "unified_inventory:bag_medium",
-	recipe = {
-		{"",               "",                            ""},
-		{"farming:cotton", "unified_inventory:bag_small", "farming:cotton"},
-		{"farming:cotton", "unified_inventory:bag_small", "farming:cotton"},
-	},
-})
+	minetest.register_craft({
+		output = "unified_inventory:bag_medium",
+		recipe = {
+			{"",               "",                            ""},
+			{"farming:cotton", "unified_inventory:bag_small", "farming:cotton"},
+			{"farming:cotton", "unified_inventory:bag_small", "farming:cotton"},
+		},
+	})
 
-minetest.register_craft({
-	output = "unified_inventory:bag_large",
-	recipe = {
-		{"",               "",                             ""},
-		{"farming:cotton", "unified_inventory:bag_medium", "farming:cotton"},
-		{"farming:cotton", "unified_inventory:bag_medium", "farming:cotton"},
-    },
-})
-
+	minetest.register_craft({
+		output = "unified_inventory:bag_large",
+		recipe = {
+			{"",               "",                             ""},
+			{"farming:cotton", "unified_inventory:bag_medium", "farming:cotton"},
+			{"farming:cotton", "unified_inventory:bag_medium", "farming:cotton"},
+	    },
+	})
+end
