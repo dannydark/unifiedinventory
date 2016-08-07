@@ -44,6 +44,7 @@ minetest.after(0.01, function()
 	print("Unified Inventory. inventory size: "..unified_inventory.items_list_size)
 	for _, name in ipairs(unified_inventory.items_list) do
 		local def = minetest.registered_items[name]
+		-- Simple drops
 		if type(def.drop) == "string" then
 			local dstack = ItemStack(def.drop)
 			if not dstack:is_empty() and dstack:get_name() ~= name then
@@ -55,20 +56,32 @@ minetest.after(0.01, function()
 				})
 
 			end
+		-- Complex drops
 		elseif type(def.drop) == "table" then
+			--[[ Extract single items from the table and save them into dedicated table
+			to register them later, in order to avoid duplicates ]]
+			local drop_memo = {}
 			for i=1,#def.drop.items do
 				local itit = def.drop.items[i]
 				for j=1,#itit.items do
 					local dstack = ItemStack(itit.items[j])
 					if not dstack:is_empty() and dstack:get_name() ~= name then
-						unified_inventory.register_craft({
-							type = "digging_chance",
-							items = {name},
-							output = dstack:get_name(),
-							width = 0,
-						})
+						local dname = dstack:get_name()
+						if #itit.items == 1 and itit.rarity == 1 then
+							drop_memo[dname] = "digging"
+						elseif drop_memo[dname] ~= "digging" then
+							drop_memo[dname] = "digging_chance"
+						end
 					end
 				end
+			end
+			for itemstring, crafttype in pairs(drop_memo) do
+				unified_inventory.register_craft({
+					type = crafttype,
+					items = {name},
+					output = itemstring,
+					width = 0,
+				})
 			end
 		end
 	end
