@@ -56,25 +56,53 @@ minetest.after(0.01, function()
 				})
 
 			end
-		-- Complex drops
+		-- Complex drops. Yes, it's really complex!
 		elseif type(def.drop) == "table" then
 			--[[ Extract single items from the table and save them into dedicated tables
-			to register them later, in order to avoid duplicates ]]
+			to register them later, in order to avoid duplicates. These tables counts
+			the total number of guaranteed drops and drops by chance (“maybes”) for each item.
+			For “maybes”, the final count is the theoretical maximum number of items, not
+			neccessarily the actual drop count. ]]
 			local drop_guaranteed = {}
 			local drop_maybe = {}
+			-- This is for catching an obscure corner case: If the top items table has
+			-- only items with rarity = 1, but max_items is set, then only the first
+			-- max_items will be part of the drop, any later entries are logically
+			-- impossible, so this variable is for keeping track of this
+			local max_items_left = def.drop.max_items
+			-- For checking whether we still encountered only guaranteed only so far;
+			-- for the first “maybe” item it will become false which will cause ALL
+			-- later items to be considered “maybes”.
+			-- A common idiom is:
+			-- { max_items 1, { items = {
+			--	{ items={"example:1"}, rarity = 5 },
+			-- 	{ items={"example:2"}, rarity = 1 }, }}}
+			-- example:2 must be considered a “maybe” because max_items is set and it
+			-- appears after a “maybe”
+			local max_start = true
+			-- Let's iterate through the items madness!
 			for i=1,#def.drop.items do
+				if max_items_left ~= nil and max_items_left <= 0 then break end
 				local itit = def.drop.items[i]
 				for j=1,#itit.items do
 					local dstack = ItemStack(itit.items[j])
 					if not dstack:is_empty() and dstack:get_name() ~= name then
 						local dname = dstack:get_name()
 						local dcount = dstack:get_count()
-						if #itit.items == 1 and itit.rarity == 1 then
+						-- Guaranteed drops AND we are not yet in “maybe mode”
+						if #itit.items == 1 and itit.rarity == 1 and max_start then
 							if drop_guaranteed[dname] == nil then
 								drop_guaranteed[dname] = 0
 							end
 							drop_guaranteed[dname] = drop_guaranteed[dname] + dcount
+
+							if max_items_left ~= nil then
+								max_items_left = max_items_left - 1
+								if max_items_left <= 0 then break end
+							end
+						-- Drop was a “maybe”
 						else
+							if max_items_left ~= nil then max_start = false end
 							if drop_maybe[dname] == nil then
 								drop_maybe[dname] = 0
 							end
