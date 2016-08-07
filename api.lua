@@ -58,11 +58,10 @@ minetest.after(0.01, function()
 			end
 		-- Complex drops
 		elseif type(def.drop) == "table" then
-			--[[ Extract single items from the table and save them into dedicated table
+			--[[ Extract single items from the table and save them into dedicated tables
 			to register them later, in order to avoid duplicates ]]
-			local drop_memo = {}
-			--[[ Also take count into account ]]
-			local drop_count = {}
+			local drop_guaranteed = {}
+			local drop_maybe = {}
 			for i=1,#def.drop.items do
 				local itit = def.drop.items[i]
 				for j=1,#itit.items do
@@ -70,27 +69,33 @@ minetest.after(0.01, function()
 					if not dstack:is_empty() and dstack:get_name() ~= name then
 						local dname = dstack:get_name()
 						local dcount = dstack:get_count()
-						if drop_count[dname] == nil then
-							drop_count[dname] = 0
-						end
 						if #itit.items == 1 and itit.rarity == 1 then
-							if drop_count[dname] == "digging_chance" then
-								drop_count[dname] = 0
+							if drop_guaranteed[dname] == nil then
+								drop_guaranteed[dname] = 0
 							end
-							drop_memo[dname] = "digging"
-							drop_count[dname] = drop_count[dname] + dcount
-						elseif drop_memo[dname] ~= "digging" then
-							drop_memo[dname] = "digging_chance"
-							drop_count[dname] = drop_count[dname] + dcount
+							drop_guaranteed[dname] = drop_guaranteed[dname] + dcount
+						else
+							if drop_maybe[dname] == nil then
+								drop_maybe[dname] = 0
+							end
+							drop_maybe[dname] = drop_maybe[dname] + dcount
 						end
 					end
 				end
 			end
-			for itemstring, crafttype in pairs(drop_memo) do
+			for itemstring, count in pairs(drop_guaranteed) do
 				unified_inventory.register_craft({
-					type = crafttype,
+					type = "digging",
 					items = {name},
-					output = itemstring .. " " .. drop_count[itemstring],
+					output = itemstring .. " " .. count,
+					width = 0,
+				})
+			end
+			for itemstring, count in pairs(drop_maybe) do
+				unified_inventory.register_craft({
+					type = "digging_chance",
+					items = {name},
+					output = itemstring .. " " .. count,
 					width = 0,
 				})
 			end
