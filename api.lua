@@ -61,16 +61,27 @@ minetest.after(0.01, function()
 			--[[ Extract single items from the table and save them into dedicated table
 			to register them later, in order to avoid duplicates ]]
 			local drop_memo = {}
+			--[[ Also take count into account ]]
+			local drop_count = {}
 			for i=1,#def.drop.items do
 				local itit = def.drop.items[i]
 				for j=1,#itit.items do
 					local dstack = ItemStack(itit.items[j])
 					if not dstack:is_empty() and dstack:get_name() ~= name then
 						local dname = dstack:get_name()
+						local dcount = dstack:get_count()
+						if drop_count[dname] == nil then
+							drop_count[dname] = 0
+						end
 						if #itit.items == 1 and itit.rarity == 1 then
+							if drop_count[dname] == "digging_chance" then
+								drop_count[dname] = 0
+							end
 							drop_memo[dname] = "digging"
+							drop_count[dname] = drop_count[dname] + dcount
 						elseif drop_memo[dname] ~= "digging" then
 							drop_memo[dname] = "digging_chance"
+							drop_count[dname] = drop_count[dname] + dcount
 						end
 					end
 				end
@@ -79,7 +90,7 @@ minetest.after(0.01, function()
 				unified_inventory.register_craft({
 					type = crafttype,
 					items = {name},
-					output = itemstring,
+					output = itemstring .. " " .. drop_count[itemstring],
 					width = 0,
 				})
 			end
