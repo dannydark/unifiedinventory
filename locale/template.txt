@@ -1,5 +1,8 @@
 # Translation by
 
+### api.lua ###
+Digging (by chance) = 
+
 # Template
 ### bags.lua ###
 Bags = 
