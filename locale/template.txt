@@ -57,6 +57,8 @@ Show next recipe =
 Show next usage = 
 Show previous recipe = 
 Show previous usage = 
+# Shown for huge crafting recipes; try to keep the line length short and use multiple line breaks as needed
+This recipe is too\nlarge to be displayed. = 
 Recipe %d of %d = 
 Usage %d of %d = 
 No recipes =
