@@ -206,6 +206,18 @@ function unified_inventory.get_formspec(player, page)
 			for x = 0, ui_peruser.pagecols - 1 do
 				local name = unified_inventory.filtered_items_list[player_name][list_index]
 				if minetest.registered_items[name] then
+					-- Clicked on current item: Flip crafting direction
+					if name == unified_inventory.current_item[player_name] then
+						local cdir = unified_inventory.current_craft_direction[player_name]
+						if cdir == "recipe" then
+							dir = "usage"
+						elseif cdir == "usage" then
+							dir = "recipe"
+						end
+					else
+					-- Default: use active search direction by default
+						dir = unified_inventory.active_search_direction[player_name]
+					end
 					formspec[n] = "item_image_button["
 						..(8.2 + x * 0.7)..","
 						..(ui_peruser.formspec_y + ui_peruser.page_y + y * 0.7)..";.81,.81;"
