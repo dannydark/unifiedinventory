@@ -188,11 +188,24 @@ local function stack_image_button(x, y, w, h, buttonname_prefix, item)
 		selectitem = group_item.sole and displayitem or name
 	end
 	local label = show_is_group and "G" or ""
-	return string.format("item_image_button[%f,%f;%f,%f;%s;%s;%s]",
+	local buttonname = minetest.formspec_escape(buttonname_prefix..unified_inventory.mangle_for_formspec(selectitem))
+	local button = string.format("item_image_button[%f,%f;%f,%f;%s;%s;%s]",
 			x, y, w, h,
-			minetest.formspec_escape(displayitem),
-			minetest.formspec_escape(buttonname_prefix..unified_inventory.mangle_for_formspec(selectitem)),
-			label)
+			minetest.formspec_escape(displayitem), buttonname, label)
+	if show_is_group then
+		local groupstring, andcount = unified_inventory.extract_groupnames(name)
+		local grouptip
+		if andcount == 1 then
+			grouptip = string.format(S("Any item belonging to the %s group"), groupstring)
+		elseif andcount > 1 then
+			grouptip = string.format(S("Any item belonging to the groups %s"), groupstring)
+		end
+		grouptip = minetest.formspec_escape(grouptip)
+		if andcount >= 1 then
+			button = button  .. string.format("tooltip[%s;%s]", buttonname, grouptip)
+		end
+	end
+	return button
 end
 
 local recipe_text = {
