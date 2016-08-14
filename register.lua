@@ -207,6 +207,14 @@ local role_text = {
 	recipe = "Result",
 	usage = "Ingredient",
 }
+local next_alt_text = {
+	recipe = "Show next recipe",
+	usage = "Show next usage",
+}
+local prev_alt_text = {
+	recipe = "Show previous recipe",
+	usage = "Show previous usage",
+}
 local other_dir = {
 	recipe = "usage",
 	usage = "recipe",
@@ -313,7 +321,10 @@ unified_inventory.register_page("craftguide", {
 		if alternates and alternates > 1 then
 			formspec = formspec.."label[5.5,"..(formspecy + 1.6)..";"
 					..string.format(F(recipe_text[dir]), alternate, alternates).."]"
-					.."button[5.5,"..(formspecy + 2)..";2,1;alternate;" .. F("Alternate") .. "]"
+					.."image_button[5.5,"..(formspecy + 2)..";1,1;ui_left_icon.png;alternate_prev;]"
+					.."image_button[6.5,"..(formspecy + 2)..";1,1;ui_right_icon.png;alternate;]"
+					.."tooltip[alternate_prev;"..F(prev_alt_text[dir]).."]"
+					.."tooltip[alternate;"..F(next_alt_text[dir]).."]"
 		end
 		return {formspec = formspec}
 	end,
