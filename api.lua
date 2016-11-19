@@ -135,7 +135,7 @@ minetest.after(0.01, function()
 	for _, recipes in pairs(unified_inventory.crafts_for.recipe) do
 		for _, recipe in ipairs(recipes) do
 			local ingredient_items = {}
-			for _, spec in ipairs(recipe.items) do
+			for _, spec in pairs(recipe.items) do
 				local matches_spec = unified_inventory.canonical_item_spec_matcher(spec)
 				for _, name in ipairs(unified_inventory.items_list) do
 					if matches_spec(name) then
