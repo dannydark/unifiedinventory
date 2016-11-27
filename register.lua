@@ -59,7 +59,11 @@ unified_inventory.register_button("home_gui_set", {
 		else
 			minetest.chat_send_player(player_name,
 				S("You don't have the \"home\" privilege!"))
+			unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
 		end
+	end,
+	condition = function(player)
+		return minetest.check_player_privs(player:get_player_name(), {home=true})
 	end,
 })
 
@@ -77,7 +81,11 @@ unified_inventory.register_button("home_gui_go", {
 		else
 			minetest.chat_send_player(player_name,
 				S("You don't have the \"home\" privilege!"))
+			unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
 		end
+	end,
+	condition = function(player)
+		return minetest.check_player_privs(player:get_player_name(), {home=true})
 	end,
 })
 
@@ -97,7 +105,11 @@ unified_inventory.register_button("misc_set_day", {
 		else
 			minetest.chat_send_player(player_name,
 				S("You don't have the settime privilege!"))
+			unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
 		end
+	end,
+	condition = function(player)
+		return minetest.check_player_privs(player:get_player_name(), {settime=true})
 	end,
 })
 
@@ -117,7 +129,11 @@ unified_inventory.register_button("misc_set_night", {
 		else
 			minetest.chat_send_player(player_name,
 					S("You don't have the settime privilege!"))
+			unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
 		end
+	end,
+	condition = function(player)
+		return minetest.check_player_privs(player:get_player_name(), {settime=true})
 	end,
 })
 
@@ -133,12 +149,16 @@ unified_inventory.register_button("clear_inv", {
 					.." of creative mode to prevent"
 					.." accidental inventory trashing."
 					.."\nUse the trash slot instead."))
+			unified_inventory.set_inventory_formspec(player, unified_inventory.current_page[player_name])
 			return
 		end
 		player:get_inventory():set_list("main", {})
 		minetest.chat_send_player(player_name, S('Inventory cleared!'))
 		minetest.sound_play("trash_all",
 				{to_player=player_name, gain = 1.0})
+	end,
+	condition = function(player)
+		return unified_inventory.is_creative(player:get_player_name())
 	end,
 })
 
