@@ -76,7 +76,10 @@ dofile(modpath.."/api.lua")
 dofile(modpath.."/internal.lua")
 dofile(modpath.."/callbacks.lua")
 dofile(modpath.."/register.lua")
-dofile(modpath.."/bags.lua")
+
+if minetest.setting_getbool("unified_inventory_bags") ~= false then
+	dofile(modpath.."/bags.lua")
+end
 
 dofile(modpath.."/item_names.lua")
 
