@@ -13,11 +13,11 @@ Unified inventory code is licensed under the GNU LGPLv2+.
 
 Licenses for textures:
 
-VanessaE: (WTFPL)
+VanessaE: (CC-BY-4.0)
   * `ui_group.png`
 
-RealBadAngel: (WTFPL)
+RealBadAngel: (CC-BY-4.0)
   * Everything else.
 
-Tango Project: (WTFPL)
+Tango Project: (CC-BY-4.0)
   * `ui_reset_icon.png`
