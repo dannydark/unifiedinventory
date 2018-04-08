@@ -242,14 +242,6 @@ msgid "Show previous usage"
 msgstr ""
 
 #: register.lua
-msgid "usage"
-msgstr "kullanım"
-
-#: register.lua
-msgid "recipe"
-msgstr "tarifi"
-
-#: register.lua
 #, lua-format
 msgid "%s (%s)"
 msgstr ""

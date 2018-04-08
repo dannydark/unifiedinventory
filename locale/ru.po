@@ -247,14 +247,6 @@ msgid "Show previous usage"
 msgstr "Прошлая страница"
 
 #: register.lua
-msgid "usage"
-msgstr "использование"
-
-#: register.lua
-msgid "recipe"
-msgstr "рецепт"
-
-#: register.lua
 #, lua-format
 msgid "%s (%s)"
 msgstr ""

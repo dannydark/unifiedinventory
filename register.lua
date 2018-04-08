@@ -252,8 +252,8 @@ local prev_alt_text = {
 	usage = S("Show previous usage"),
 }
 local other_dir = {
-	recipe = S("usage"),
-	usage = S("recipe"),
+	recipe = "usage",
+	usage = "recipe",
 }
 
 unified_inventory.register_page("craftguide", {

@@ -247,14 +247,6 @@ msgid "Show previous usage"
 msgstr "Exibir Utilização Anterior"
 
 #: register.lua
-msgid "usage"
-msgstr "uso"
-
-#: register.lua
-msgid "recipe"
-msgstr "Receita"
-
-#: register.lua
 #, lua-format
 msgid "%s (%s)"
 msgstr ""
