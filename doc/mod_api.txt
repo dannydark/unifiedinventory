@@ -24,10 +24,12 @@ Register a new page: The callback inside this function is called on user input.
 			return {
 				formspec = "button[2,2;2,1;mybutton;Press me]",
 				-- ^ Final form of the formspec to display
-				draw_inventory = false,
+				draw_inventory = false,   -- default `true`
 				-- ^ Optional. Hides the player's `main` inventory list
-				draw_item_list = false,
+				draw_item_list = false,   -- default `true`
 				-- ^ Optional. Hides the item list on the right side
+				formspec_prepend = false, -- default `false`
+				-- ^ Optional. When `false`: Disables the formspec prepend
 			}
 		end,
 	})
