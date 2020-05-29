@@ -152,6 +152,8 @@ minetest.register_on_player_receive_fields(function(player, formname, fields)
 			local inv = player:get_inventory()
 			local stack = ItemStack(clicked_item)
 			stack:set_count(stack:get_stack_max())
+			local meta = stack:get_meta()
+			meta:set_string("creator", player_name)
 			if inv:room_for_item("main", stack) then
 				inv:add_item("main", stack)
 			end

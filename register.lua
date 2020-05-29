@@ -438,7 +438,11 @@ local function craftguide_giveme(player, formname, fields)
 
 	local player_inv = player:get_inventory()
 
-	player_inv:add_item("main", {name = output, count = amount})
+	local itemstack = ItemStack({name = output, count = amount})
+	local meta = itemstack:get_meta()
+	meta:set_string("creator", player_name)
+	
+	player_inv:add_item("main", itemstack)
 end
 
 local function craftguide_craft(player, formname, fields)
