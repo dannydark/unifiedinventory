@@ -135,7 +135,7 @@ end
 local function load_bags_metadata(player, bags_inv)
 	local player_inv = player:get_inventory()
 	local meta = player:get_meta()
-	local bags_meta = meta:get_string("unified_inventory:bags")
+	local bags_meta = meta:get("unified_inventory:bags")
 	local bags = bags_meta and minetest.deserialize(bags_meta) or {}
 	local dirty_meta = false
 	if not bags_meta then
