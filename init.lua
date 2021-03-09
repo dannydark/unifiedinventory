@@ -113,7 +113,7 @@ dofile(modpath.."/api.lua")
 for _, style in ipairs({ui.style_full, ui.style_lite}) do
 	style.items_per_page =  style.pagecols * style.pagerows
 	style.standard_inv = string.format("list[current_player;main;%f,%f;8,4;]",
-							style.std_inv_x+0.13, style.std_inv_y+0.13)
+							style.std_inv_x + ui.list_img_offset, style.std_inv_y + ui.list_img_offset)
 
 	style.standard_inv_bg = ui.make_inv_img_grid(style.std_inv_x, style.std_inv_y, 8, 1, true)..
 							ui.make_inv_img_grid(style.std_inv_x, style.std_inv_y + ui.imgscale, 8, 3)
