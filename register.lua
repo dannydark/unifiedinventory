@@ -192,7 +192,7 @@ ui.register_page("craft", {
 			formspec[n] = ui.single_slot(craftx - 2.5, crafty + 2.5)
 			formspec[n+1] = string.format("label[%f,%f;%s]", craftx - 2.3, crafty + 2.4,F(S("Refill:")))
 			formspec[n+2] = string.format("list[detached:%srefill;main;%f,%f;1,1;]",
-				F(player_name), craftx - 2.2 - ui.list_img_offset, crafty + 2.5 + ui.list_img_offset)
+				F(player_name), craftx - 2.5 + ui.list_img_offset, crafty + 2.5 + ui.list_img_offset)
 		end
 		return {formspec=table.concat(formspec)}
 	end,
