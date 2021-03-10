@@ -317,7 +317,7 @@ function ui.make_trash_slot(xpos, ypos)
 	return
 		ui.single_slot(xpos, ypos)..
 		"image["..xpos..","..ypos..";1.25,1.25;ui_trash_slot_icon.png^[opacity:95]"..
-		"list[detached:trash;main;"..xpos..","..ypos..";1,1;]"
+		"list[detached:trash;main;"..(xpos + ui.list_img_offset)..","..(ypos + ui.list_img_offset)..";1,1;]"
 end
 
 function ui.make_inv_img_grid(xpos, ypos, width, height, bright)
